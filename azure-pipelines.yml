@@ -23,9 +23,9 @@ stages:
               packageType: "sdk"
               version: "8.x"
 
-          - script: dotnet restore "Local Azure Devops Agent.sln"
+          - script: dotnet restore "OTAssessment.sln"
             displayName: "Restore dependencies"
 
-          - script: dotnet build "Local Azure Devops Agent.sln" --no-restore --configuration Release
+          - script: dotnet build "OTAssessment.sln" --no-restore --configuration Release
             displayName: "Build"
 
