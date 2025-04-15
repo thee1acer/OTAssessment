@@ -1,6 +1,23 @@
 services:
-  otassessment:
-    image: ${DOCKER_REGISTRY-}otassessment
-    build:
-      context: .
-      dockerfile: OTAssessment/Dockerfile
+  ubuntu-agent:
+    image: ubuntu:latest
+    container_name: ubuntu-agent
+    restart: always
+    volumes:
+      - .:/workspace
+      - ./docker-scripts/ubuntu-agent/install-agent.sh:/install-agent.sh
+      - agent-data:/home/ubuntu/agent
+      - /var/run/docker.sock:/var/run/docker.sock
+    stdin_open: true
+    tty: true
+    environment:
+      - DEBIAN_FRONTEND=noninteractive
+      - AZURE_PERSONAL_TOKEN=${AZURE_PERSONAL_TOKEN}
+      - AZURE_AGENT_POOL=${AZURE_AGENT_POOL}
+      - AZURE_COMPANY_URL=${AZURE_COMPANY_URL}
+    entrypoint: ["/bin/bash", "-c", "/install-agent.sh && tail -f /dev/null"]
+    user: "root"
+    privileged: true
+
+volumes:
+  agent-data:
