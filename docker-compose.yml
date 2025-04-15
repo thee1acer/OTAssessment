@@ -1,0 +1,6 @@
+services:
+  otassessment:
+    image: ${DOCKER_REGISTRY-}otassessment
+    build:
+      context: .
+      dockerfile: OTAssessment/Dockerfile
