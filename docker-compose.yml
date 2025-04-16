@@ -1,4 +1,15 @@
 services:
+  ot-assessment-api:
+    image: ot-assessment-api
+    container_name: ot-assessment-api
+    environment:
+      - REFERENCE_DB__SERVER=sql_db
+      - REFERENCE_DB__DATABASE_NAME=Coral
+      - REFERENCE_DB__USER=sa
+      - REFERENCE_DB__PASSWORD=Password1!
+    ports:
+     - "5000:80"
+
   ubuntu-agent:
     image: ubuntu:latest
     container_name: ubuntu-agent
@@ -18,6 +29,50 @@ services:
     entrypoint: ["/bin/bash", "-c", "/install-agent.sh && tail -f /dev/null"]
     user: "root"
     privileged: true
+  
+  mssql-server:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: mssql-server
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=$tr0ngP@55w0rD!
+    ports:
+      - "1433:1433"
+    networks:
+      - mssql-network
+    volumes:
+      - mssql_data:/var/opt/mssql
+
+  redis:
+    image: redis:7.2-alpine
+    container_name: redis-tls
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./redis.conf:/usr/local/etc/redis/redis.conf
+      - ./tls:/tls
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq-container
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      - RABBITMQ_DEFAULT_USER=default
+      - RABBITMQ_DEFAULT_PASS=$tr0ngP@55w0rD!
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
 
 volumes:
   agent-data:
+  rabbitmq_data:
+    driver: local
+  mssql_data:
+    driver: local
+    
+networks:
+  ot-assessment-network:
+    name: shared-network
+    driver: bridge
