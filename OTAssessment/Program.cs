@@ -11,6 +11,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddOptions<ConnectionString>().BindConfiguration("REFERENCE_DB");
+
 builder.Services.AddDbContext<OTAssessmentContext>((provider, options) =>
 {
     var connectionDetails = provider.GetRequiredService<IOptions<ConnectionString>>();

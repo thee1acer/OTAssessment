@@ -8,7 +8,7 @@ services:
       - REFERENCE_DB__SERVER=mssql-server
       - REFERENCE_DB__DATABASE_NAME=OTAssessment
       - REFERENCE_DB__USER=sa
-      - REFERENCE_DB__PASSWORD=$tr0ngP@55w0rD!
+      - REFERENCE_DB__PASSWORD=5tr0ngP@55w0rD
     ports:
       - "5000:80"
     networks:
@@ -39,7 +39,7 @@ services:
     container_name: mssql-server
     environment:
       - ACCEPT_EULA=Y
-      - SA_PASSWORD=$tr0ngP@55w0rD!
+      - SA_PASSWORD=5tr0ngP@55w0rD
     ports:
       - "1433:1433"
     networks:
@@ -67,7 +67,7 @@ services:
       - "15672:15672"
     environment:
       - RABBITMQ_DEFAULT_USER=default
-      - RABBITMQ_DEFAULT_PASS=$tr0ngP@55w0rD!
+      - RABBITMQ_DEFAULT_PASS=5tr0ngP@55w0rD
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
     networks:
