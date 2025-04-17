@@ -1,14 +1,18 @@
 services:
   ot-assessment-api:
-    image: ot-assessment-api
+    build:
+      context: .
+      dockerfile: OTAssessment/Dockerfile
     container_name: ot-assessment-api
     environment:
-      - REFERENCE_DB__SERVER=sql_db
-      - REFERENCE_DB__DATABASE_NAME=Coral
+      - REFERENCE_DB__SERVER=mssql-server
+      - REFERENCE_DB__DATABASE_NAME=OTAssessment
       - REFERENCE_DB__USER=sa
-      - REFERENCE_DB__PASSWORD=Password1!
+      - REFERENCE_DB__PASSWORD=$tr0ngP@55w0rD!
     ports:
-     - "5000:80"
+      - "5000:80"
+    networks:
+      - ot-assessment-network
 
   ubuntu-agent:
     image: ubuntu:latest
@@ -39,7 +43,7 @@ services:
     ports:
       - "1433:1433"
     networks:
-      - mssql-network
+      - ot-assessment-network
     volumes:
       - mssql_data:/var/opt/mssql
 
@@ -52,6 +56,8 @@ services:
       - ./redis.conf:/usr/local/etc/redis/redis.conf
       - ./tls:/tls
     command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
+    networks:
+      - ot-assessment-network
 
   rabbitmq:
     image: rabbitmq:3-management
@@ -64,6 +70,8 @@ services:
       - RABBITMQ_DEFAULT_PASS=$tr0ngP@55w0rD!
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - ot-assessment-network
 
 volumes:
   agent-data:

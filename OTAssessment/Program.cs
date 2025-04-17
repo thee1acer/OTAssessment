@@ -2,6 +2,7 @@ using OT.Assessment.Database;
 using OT.Assessment.Database.Helpers;
 using Microsoft.Extensions.Options;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.SqlServer;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,7 +10,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddOptions<ConnectionString>().BindConfiguration("DATABASE");
+builder.Services.AddOptions<ConnectionString>().BindConfiguration("REFERENCE_DB");
 builder.Services.AddDbContext<OTAssessmentContext>((provider, options) =>
 {
     var connectionDetails = provider.GetRequiredService<IOptions<ConnectionString>>();
@@ -31,7 +32,7 @@ using (var scope = app.Services.CreateScope())
     var services = scope.ServiceProvider;
     var context = services.GetRequiredService<OTAssessmentContext>();
 
-    //migrate changes
+    context.Database.Migrate();
 }
 
 app.UseHttpsRedirection();
