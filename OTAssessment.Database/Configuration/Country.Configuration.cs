@@ -13,7 +13,7 @@ public class CountryConfiguration : IEntityTypeConfiguration<Country>
         builder.HasKey(x => x.Id);
         builder.HasAlternateKey(x => x.Code);
 
-        builder.Property(x => x.Id).HasDefaultValueSql("NEWID()").ValueGeneratedOnAdd();
+        builder.Property(x => x.Id).ValueGeneratedOnAdd();
         builder.Property(x => x.Code).IsRequired();
     }
 }

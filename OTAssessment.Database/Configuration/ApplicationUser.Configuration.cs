@@ -17,10 +17,6 @@ public class ApplicationUserConfiguration : IEntityTypeConfiguration<Application
                .HasForeignKey(x => x.AccessLevelId)
                .OnDelete(DeleteBehavior.Restrict);
 
-        builder.HasDiscriminator<string>("UserType")
-               .HasValue<User>("User")
-               .HasValue<ApplicationUser>("ApplicationUser");
-
         builder.HasIndex(x => x.AccessLevelId);
     }
 }

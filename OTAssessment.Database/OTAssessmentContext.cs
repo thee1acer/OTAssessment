@@ -1,10 +1,11 @@
 ﻿using System.Reflection;
 using Microsoft.EntityFrameworkCore;
+using OT.Assessment.Database.Helpers;
 using OT.Assessment.Database.Models;
-
 namespace OT.Assessment.Database;
 public partial class OTAssessmentContext: DbContext
 {
+    public OTAssessmentContext(){}
     public OTAssessmentContext(DbContextOptions<OTAssessmentContext> options): base(options) {}
 
     public virtual DbSet<AccessLevel> AccessLevels => Set<AccessLevel>();
@@ -21,6 +22,28 @@ public partial class OTAssessmentContext: DbContext
     public virtual DbSet<User> Users => Set<User>();
     public virtual DbSet<Wager> Wagers => Set<Wager>();
 
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        if (!optionsBuilder.IsConfigured)
+        {
+            var connectionDetails = new ConnectionString()
+            {
+                Server = GetEnvironmentVariable("SERVER"),
+                DatabaseName = GetEnvironmentVariable("DATABASE_NAME"),
+                Password = GetEnvironmentVariable("PASSWORD"),
+                User = GetEnvironmentVariable("USER"),
+            };
+
+            var connectionString = ConnectionStringBuilder.BuildConnectionString(connectionDetails);
+
+            optionsBuilder.UseSqlServer(connectionString);
+        }
+    }
+
+    private string GetEnvironmentVariable(string variableName)
+    {
+        return Environment.GetEnvironmentVariable($"{variableName}") ?? string.Empty;
+    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

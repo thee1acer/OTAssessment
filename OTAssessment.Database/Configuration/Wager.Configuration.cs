@@ -12,7 +12,7 @@ public class WagerConfiguration : IEntityTypeConfiguration<Wager>
 
         builder.HasKey(x => x.Id);
 
-        builder.Property(x => x.Id).HasDefaultValueSql("NEWID()").ValueGeneratedOnAdd();
+        builder.Property(x => x.Id).ValueGeneratedOnAdd();
         builder.Property(x => x.SessionData).IsRequired();
         builder.Property(x => x.Duration).IsRequired();
 

@@ -12,6 +12,6 @@ public class ProviderConfiguration : IEntityTypeConfiguration<Provider>
 
         builder.HasKey(x => x.Id);
 
-        builder.Property(x => x.Id).HasDefaultValue("NEWID()").ValueGeneratedOnAdd();
+        builder.Property(x => x.Id).ValueGeneratedOnAdd();
     }
 }

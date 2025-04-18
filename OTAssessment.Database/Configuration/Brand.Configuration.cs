@@ -9,6 +9,6 @@ public class BrandConfiguration : IEntityTypeConfiguration<Brand>
     public void Configure(EntityTypeBuilder<Brand> builder)
     {
         builder.ToTable("Brands");
-        builder.Property(x => x.Id).HasDefaultValue("NEWID()").ValueGeneratedOnAdd();
+        builder.Property(x => x.Id).ValueGeneratedOnAdd();
     }
 }

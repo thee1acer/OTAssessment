@@ -13,7 +13,7 @@ public class AccessLevelConfiguration : IEntityTypeConfiguration<AccessLevel>
         
         builder.HasKey(x => x.Id);
 
-        builder.Property(x => x.Id).HasDefaultValue("NEWID()").ValueGeneratedOnAdd();
+        builder.Property(x => x.Id).ValueGeneratedOnAdd();
 
         builder.HasData(
             new AccessLevel 

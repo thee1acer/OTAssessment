@@ -12,10 +12,5 @@ public class GamePlayerConfiguration : IEntityTypeConfiguration<GamePlayer>
 
         builder.Property(x => x.Age);
         builder.Property(x => x.Phone).IsRequired();
-
-        builder.HasDiscriminator<string>("UserType")
-            .HasValue<User>("User")
-            .HasValue<ApplicationUser>("ApplicationUser")
-            .HasValue<GamePlayer>("GamePlayer");
     }
 }

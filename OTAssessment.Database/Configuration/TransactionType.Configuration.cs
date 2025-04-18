@@ -12,7 +12,7 @@ public class TransactionTypeConfiguration : IEntityTypeConfiguration<Transaction
 
         builder.HasKey(x => x.Id);
 
-        builder.Property(x => x.Id).HasDefaultValueSql("NEWID()").ValueGeneratedOnAdd();
+        builder.Property(x => x.Id).ValueGeneratedOnAdd();
         builder.Property(x => x.TransactionTypeName).IsRequired();
         builder.Property(x => x.TransactionTypeDescription).IsRequired();
 
