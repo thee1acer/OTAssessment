@@ -2,8 +2,9 @@ namespace OT.Assessment.Database.Models;
 
 public class User: Audit
 {
-    public int Id { get; set; }
-    public required string ApplicationUserName { get; set; }
-    public required string ApplicationUserSurname { get; set; }
-    public required string ApplicationUserEmail { get; set; }
+    public Guid Id { get; set; }
+    public required string Name { get; set; }
+    public required string Surname { get; set; }
+    public required string Email { get; set; }
+    public required string UserName { get; set; }
 }
