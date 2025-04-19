@@ -1,7 +1,10 @@
 ﻿using System.Reflection;
+using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 using OT.Assessment.Database.Helpers;
 using OT.Assessment.Database.Models;
+using DotNetEnv;
+
 namespace OT.Assessment.Database;
 public partial class OTAssessmentContext: DbContext
 {
@@ -26,6 +29,8 @@ public partial class OTAssessmentContext: DbContext
     {
         if (!optionsBuilder.IsConfigured)
         {
+            var data = Env.Load();
+            
             var connectionDetails = new ConnectionString()
             {
                 Server = GetEnvironmentVariable("SERVER"),
@@ -35,14 +40,14 @@ public partial class OTAssessmentContext: DbContext
             };
 
             var connectionString = ConnectionStringBuilder.BuildConnectionString(connectionDetails);
-
+            
             optionsBuilder.UseSqlServer(connectionString);
         }
     }
 
     private string GetEnvironmentVariable(string variableName)
     {
-        return Environment.GetEnvironmentVariable($"{variableName}") ?? string.Empty;
+        return Environment.GetEnvironmentVariable($"REFERENCE_DB__{variableName}", EnvironmentVariableTarget.Process) ?? string.Empty;
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
