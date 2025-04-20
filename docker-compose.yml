@@ -9,6 +9,9 @@ services:
       - REFERENCE_DB__DATABASE_NAME=OTAssessment
       - REFERENCE_DB__USER=sa
       - REFERENCE_DB__PASSWORD=5tr0ngP@55w0rD
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+
     ports:
       - "5000:80"
     networks:

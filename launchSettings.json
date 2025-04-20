@@ -4,7 +4,11 @@
       "commandName": "DockerCompose",
       "commandVersion": "1.0",
       "serviceActions": {
-        "otassessment": "StartDebugging"
+        "mssql-server": "StartWithoutDebugging",
+        "ot-assessment-api": "StartDebugging",
+        "rabbitmq": "StartWithoutDebugging",
+        "redis": "StartWithoutDebugging",
+        "ubuntu-agent": "DoNotStart"
       }
     }
   }

@@ -2,7 +2,6 @@ using OT.Assessment.Database;
 using OT.Assessment.Database.Helpers;
 using Microsoft.Extensions.Options;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.SqlServer;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,17 +21,15 @@ builder.Services.AddDbContext<OTAssessmentContext>((provider, options) =>
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+app.UseSwagger();
+app.UseSwaggerUI();
 
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
     var context = services.GetRequiredService<OTAssessmentContext>();
 
+    context.Database.EnsureDeleted();
     context.Database.Migrate();
 }
 
