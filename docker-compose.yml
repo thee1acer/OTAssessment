@@ -17,6 +17,22 @@ services:
     networks:
       - ot-assessment-network
 
+  ot-assessment-casino-wager-consumer-worker:
+    build:
+      context: .
+      dockerfile: OT.Assessment.ConsumeCasinoWager.Worker/Dockerfile
+    container_name: casino-wager-consumer-worker
+    depends_on:
+      - rabbitmq
+ 
+  ot-assessment-casino-wager-producer-worker:
+    build:
+      context: .
+      dockerfile: OT.Assessment.ProduceCasinoWager.Worker/Dockerfile
+    container_name: casino-wager-producer-worker
+    depends_on:
+      - rabbitmq
+
   ubuntu-agent:
     image: ubuntu:latest
     container_name: ubuntu-agent
