@@ -4,7 +4,7 @@ services:
       com.microsoft.visual-studio.project-name: "OT.Assessment.Api"
     build:
       context: .
-      dockerfile: OTAssessment/Dockerfile
+      dockerfile: OT.Assessment.Api/Dockerfile
     container_name: ot-assessment-api
     environment:
       - REFERENCE_DB__SERVER=mssql-server
