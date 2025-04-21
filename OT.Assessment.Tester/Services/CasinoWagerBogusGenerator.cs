@@ -53,7 +53,7 @@ public class CasinoWagerBogusGenerator
             .RuleFor(g => g.Id, f => Guid.NewGuid())
             .RuleFor(g => g.Name, f => f.Commerce.ProductName())
             .RuleFor(g => g.Theme, f => f.PickRandom(themes))
-            .RuleFor(g => g.ThemeName, (f, t) => t.Theme.Name)
+            .RuleFor(g => g.ThemeId, (f, t) => t.Theme.Id)
             .RuleFor(g => g.Provider, f => f.PickRandom(providers))
             .RuleFor(g => g.ProviderId, (f, x) => x.Provider.Id);
         var games = gameFaker.Generate(20);
