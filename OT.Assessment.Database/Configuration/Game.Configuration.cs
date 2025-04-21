@@ -20,7 +20,7 @@ namespace OT.Assessment.Database.Configurations
 
             builder.HasOne(g => g.Theme)
                    .WithMany()
-                   .HasForeignKey(g => g.ThemeName)
+                   .HasForeignKey(g => g.ThemeId)
                    .OnDelete(DeleteBehavior.Restrict);
         }
     }
