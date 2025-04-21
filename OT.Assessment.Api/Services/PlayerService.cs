@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using OT.Assessment.Database;
+using OT.Assessment.Models;
 
 namespace OT.Assessment.Services;
 public class PlayerService
@@ -14,17 +15,17 @@ public class PlayerService
     }
 
 
-    public async Task<IActionResult> GetCasinoWagersAsync()
+    public async Task<List<WagerDTO>> GetCasinoWagersAsync()
     {
-        return;
+        return [];
     }
 
-    public async Task<IActionResult> GetPlayerWagersByIdAsync(int playerId)
+    public async Task<List<WagerDTO>> GetPlayerWagersByIdAsync(int playerId)
     {
-        return;
+        return [];
     }
-    public async Task<IActionResult> GetTopSpendersAsync(int count)
+    public async Task<List<WagerDTO>> GetTopSpendersAsync(int count)
     {
-        return;
+        return [];
     }
 }

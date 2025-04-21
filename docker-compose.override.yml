@@ -1,5 +1,7 @@
 services:
   ot-assessment-api:
+    labels:
+      com.microsoft.visual-studio.project-name: "OT.Assessment.Api"
     build:
       context: .
       dockerfile: OTAssessment/Dockerfile
@@ -13,6 +15,26 @@ services:
       - ASPNETCORE_URLS=http://+:80
     ports:
       - "5000:80"
+    networks:
+      - ot-assessment-network
+  
+  ot-assessment-casino-wager-consumer-worker:
+    build:
+      context: .
+      dockerfile: OT.Assessment.ConsumeCasinoWager.Worker/Dockerfile
+    container_name: casino-wager-consumer-worker
+    depends_on:
+      - rabbitmq
+    networks:
+      - ot-assessment-network
+ 
+  ot-assessment-casino-wager-producer-worker:
+    build:
+      context: .
+      dockerfile: OT.Assessment.ProduceCasinoWager.Worker/Dockerfile
+    container_name: casino-wager-producer-worker
+    depends_on:
+      - rabbitmq
     networks:
       - ot-assessment-network
   

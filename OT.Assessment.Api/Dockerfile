@@ -7,12 +7,11 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 
-COPY ["OTAssessment/OT.Assessment.Api.csproj", "OTAssessment/"]
-RUN dotnet restore "OTAssessment/OT.Assessment.Api.csproj"
+COPY OT.Assessment.Api/OT.Assessment.Api.csproj ./ 
+RUN dotnet restore "OT.Assessment.Api.csproj"
 
-COPY . .
+COPY OT.Assessment.Api/. ./
 
-WORKDIR "/src/OTAssessment"
 RUN dotnet build "OT.Assessment.Api.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
@@ -22,4 +21,5 @@ RUN dotnet publish "OT.Assessment.Api.csproj" -c $BUILD_CONFIGURATION -o /app/pu
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+
 ENTRYPOINT ["dotnet", "OT.Assessment.Api.dll"]

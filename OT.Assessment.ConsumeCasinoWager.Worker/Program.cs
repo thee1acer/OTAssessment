@@ -6,6 +6,4 @@ var builder = Host.CreateApplicationBuilder(args);
 
 builder.Services.AddHostedService<CasinoWagerConsumer>();
 
-var host = builder.Build();
-
-host.Run();
+builder.Build().Run();
