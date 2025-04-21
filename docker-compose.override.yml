@@ -17,7 +17,7 @@ services:
       - "5000:80"
     networks:
       - ot-assessment-network
-  
+
   ot-assessment-casino-wager-consumer-worker:
     build:
       context: .
@@ -58,6 +58,7 @@ services:
       - "6379:6379"
     volumes:
       - ./redis.conf:/usr/local/etc/redis/redis.conf
+      - ./tls/users.acl:/usr/local/etc/redis/users.acl
       - ./tls:/tls
     command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
     networks:
@@ -82,7 +83,8 @@ volumes:
     driver: local
   mssql_data:
     driver: local
-    
+  redis-data:
+  
 networks:
   ot-assessment-network:
     name: shared-network

@@ -6,7 +6,7 @@ using OT.Assessment.Services;
 namespace OT.Assessment.Controllers;
 
 [ApiController]
-[Route(PlayerControllerConfiguration.PlayerController)]
+[Route("api/player")]
 public class PlayerController : Controller
 {
     private readonly ILogger<PlayerController> _logger;
@@ -37,8 +37,8 @@ public class PlayerController : Controller
     [Route(PlayerControllerConfiguration.TopSpenders)]
     [HttpGet]
     [ProducesResponseType(typeof(List<WagerDTO>), 200)]
-    public async Task<IActionResult> GetTopSpendersAsync(int count)
+    public async Task<IActionResult> GetTopSpendersAsync(int counter)
     {
-        return Ok(await _playerService.GetTopSpendersAsync(count));
+        return Ok(await _playerService.GetTopSpendersAsync(counter));
     }
 };
