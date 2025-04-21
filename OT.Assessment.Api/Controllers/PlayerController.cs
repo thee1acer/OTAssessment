@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using OT.Assessment.Configuration;
-using OT.Assessment.Models;
+using OT.Assessment.Api.Models;
 using OT.Assessment.Services;
 
 namespace OT.Assessment.Controllers;
@@ -20,10 +20,10 @@ public class PlayerController : Controller
 
     [Route(PlayerControllerConfiguration.CasinoWager)]
     [HttpPost]
-    [ProducesResponseType(typeof(List<WagerDTO>), 200)]
-    public async Task<IActionResult> GetCasinoWagersAsync()
+    [ProducesResponseType(typeof(bool), 200)]
+    public async Task<IActionResult> GetCasinoWagersAsync([FromBody] string listOfWagersJson)
     {
-        return Ok(await _playerService.GetCasinoWagersAsync());
+        return Ok(await _playerService.ProcessCasinoWagersAsync(listOfWagersJson));
     }
 
     [Route(PlayerControllerConfiguration.PlayerWagers)]

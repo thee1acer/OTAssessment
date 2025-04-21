@@ -1,13 +1,11 @@
-﻿using OT.Assessment.Api.Services;
-using System.Text;
+﻿using System.Text;
 using System.Text.Json;
 using NBomber.CSharp;
 using NBomber.Http;
 using NBomber.Http.CSharp;
 
 CasinoWagerBogusGenerator casinoWagerBogusGenerator = new();
-
-var results = casinoWagerBogusGenerator.GenerateMocksAsync(1000);
+var results = casinoWagerBogusGenerator.GenerateDummyWagers(10);
 
 var scenario = Scenario.Create("hello_world_scenario", 
         async context =>

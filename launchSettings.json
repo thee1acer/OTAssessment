@@ -10,7 +10,8 @@
         "redis": "StartWithoutDebugging",
         "ubuntu-agent": "DoNotStart",
         "ot-assessment-casino-wager-consumer-worker": "StartWithoutDebugging",
-        "ot-assessment-casino-wager-producer-worker": "StartWithoutDebugging"
+        "ot-assessment-casino-wager-producer-worker": "StartWithoutDebugging",
+        "ot-assessment-tester": "StartWithoutDebugging"
       }
     }
   }

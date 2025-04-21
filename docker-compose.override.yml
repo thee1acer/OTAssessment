@@ -38,6 +38,16 @@ services:
     networks:
       - ot-assessment-network
   
+  ot-assessment-tester:
+    build:
+      context: .
+      dockerfile: OT.Assessment.Tester/Dockerfile
+    container_name: ot-assessment-tester
+    depends_on:
+      - ot-assessment-api
+    networks:
+      - ot-assessment-network
+
   mssql-server:
     image: mcr.microsoft.com/mssql/server:2022-latest
     container_name: mssql-server
