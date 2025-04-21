@@ -11,11 +11,10 @@ public class TransactionTypeConfiguration : IEntityTypeConfiguration<Transaction
         builder.ToTable("TransactionTypes");
 
         builder.HasKey(x => x.Id);
+        builder.HasAlternateKey(x => x.Name);
 
         builder.Property(x => x.Id).ValueGeneratedOnAdd();
-        builder.Property(x => x.TransactionTypeName).IsRequired();
-        builder.Property(x => x.TransactionTypeDescription).IsRequired();
-
-        builder.HasIndex(x => x.TransactionTypeName).IsUnique(); 
+        builder.Property(x => x.Name).IsRequired();
+        builder.Property(x => x.Description).IsRequired();
     }
 }

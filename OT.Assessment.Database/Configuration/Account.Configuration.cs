@@ -8,13 +8,14 @@ public class AccountConfiguration : IEntityTypeConfiguration<Account>
 {
     public void Configure(EntityTypeBuilder<Account> builder)
     {
-        builder.ToTable("Accounts");
-        
-        builder.HasKey(x => x.Id);
+        builder.HasKey(a => a.Id);
 
         builder.Property(x => x.Id).ValueGeneratedOnAdd();
-        builder.Property(x => x.AccountBalance).IsRequired();
+        builder.Property(a => a.Balance).IsRequired();
 
-        builder.HasOne(x => x.User).WithOne().HasForeignKey<Account>(x => x.UserId);
+        builder.HasOne(a => a.User)
+               .WithOne(u => u.Account)
+               .HasForeignKey<Account>(a => a.UserId)
+               .OnDelete(DeleteBehavior.Cascade);
     }
 }

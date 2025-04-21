@@ -11,14 +11,12 @@ public class ThemeConfiguration : IEntityTypeConfiguration<Theme>
         builder.ToTable("Themes");
 
         builder.HasKey(x => x.Id);
+        builder.HasAlternateKey(x => x.Name);
 
         builder.Property(x => x.Id).ValueGeneratedOnAdd();
         builder.Property(x => x.Name).IsRequired();
 
-        var themesList = ThemesSeed();
-        builder.HasData(themesList);
-
-        builder.HasIndex(x => x.Name).IsUnique();
+        builder.HasData(ThemesSeed());
     }
 
     private static List<Theme> ThemesSeed()

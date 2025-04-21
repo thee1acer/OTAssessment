@@ -2,16 +2,22 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using OT.Assessment.Database.Models;
 
-namespace OT.Assessment.Database.Configurations;
-
-public class ProviderConfiguration : IEntityTypeConfiguration<Provider>
+namespace OT.Assessment.Database.Configurations
 {
-    public void Configure(EntityTypeBuilder<Provider> builder)
+    public class ProviderConfiguration : IEntityTypeConfiguration<Provider>
     {
-        builder.ToTable("Providers");
+        public void Configure(EntityTypeBuilder<Provider> builder)
+        {
+            builder.HasKey(p => p.Id);
+            builder.HasAlternateKey(p => p.Name);
+            
+            builder.Property(p => p.Id).ValueGeneratedOnAdd();
+            builder.Property(p => p.Name).IsRequired();
 
-        builder.HasKey(x => x.Id);
-
-        builder.Property(x => x.Id).ValueGeneratedOnAdd();
+            builder.HasMany(p => p.Games)
+                   .WithOne(g => g.Provider)
+                   .HasForeignKey(g => g.ProviderId)
+                   .OnDelete(DeleteBehavior.Restrict);
+        }
     }
 }

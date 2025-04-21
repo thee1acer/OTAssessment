@@ -8,16 +8,26 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
 {
     public void Configure(EntityTypeBuilder<User> builder)
     {
-        builder.ToTable("Users");
-
-        builder.HasKey(x => x.Id);
-        builder.HasAlternateKey(x => x.Email);
-        builder.HasAlternateKey(x => x.UserName);
+        builder.HasKey(u => u.Id);
+        builder.HasAlternateKey(u => u.UserName);
 
         builder.Property(x => x.Id).ValueGeneratedOnAdd();
-        builder.Property(x => x.Name).IsRequired();
-        builder.Property(x => x.Surname).IsRequired();
-        builder.Property(x => x.Email).IsRequired();
-        builder.Property(x => x.UserName).IsRequired();
+        
+        builder.Property(u => u.Name).IsRequired();
+        builder.Property(u => u.Surname).IsRequired();
+        builder.Property(u => u.Email).IsRequired();
+        builder.Property(u => u.UserName).IsRequired();
+        builder.Property(u => u.Age).IsRequired();
+        builder.Property(u => u.Phone).IsRequired();
+
+        builder.HasOne(u => u.AccesLevel)
+               .WithMany()
+               .HasForeignKey(u => u.AccesLevelId)
+               .OnDelete(DeleteBehavior.Restrict);
+        
+        builder.HasOne(u => u.Account)
+               .WithOne(a => a.User)
+               .HasForeignKey<User>(u => u.AccountId)
+               .OnDelete(DeleteBehavior.Cascade);
     }
 }

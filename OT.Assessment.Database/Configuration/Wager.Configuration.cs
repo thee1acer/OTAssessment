@@ -21,10 +21,8 @@ public class WagerConfiguration : IEntityTypeConfiguration<Wager>
                .WithMany() 
                .HasForeignKey(x => x.ThemeId)
                .OnDelete(DeleteBehavior.Restrict);
-
         
         builder.Property(x => x.ProviderId).IsRequired();
-
         builder.HasOne(x => x.Provider)
                .WithMany()
                .HasForeignKey(x => x.ProviderId)
