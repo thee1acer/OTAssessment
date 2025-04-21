@@ -1,4 +1,4 @@
-namespace OT.Assessment.Models;
+namespace OT.Assessment.Api.Models;
 
 public class AuditDTO
 {

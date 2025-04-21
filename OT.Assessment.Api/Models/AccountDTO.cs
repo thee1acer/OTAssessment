@@ -1,9 +1,10 @@
-namespace OT.Assessment.Models;
+namespace OT.Assessment.Api.Models;
 
 public class AccountDTO
 {
     public Guid Id { get; set; }
-    public bool AccountBalance { get; set; }
+    public bool Balance { get; set; }
+
     public Guid UserId { get; set; }
-    public required UserDTO User { get; set; }
+    public virtual UserDTO User { get; set; }
 }

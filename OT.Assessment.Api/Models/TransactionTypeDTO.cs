@@ -1,7 +1,8 @@
-namespace OT.Assessment.Models;
+namespace OT.Assessment.Api.Models;
+
 public class TransactionTypeDTO
 {
     public Guid Id { get; set; }
-    public required string TransactionTypeName { get; set; }
-    public required string TransactionTypeDescription { get; set; }
+    public required string Name { get; set; }
+    public required string Description { get; set; }
 }
