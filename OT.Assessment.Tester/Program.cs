@@ -1,42 +1,26 @@
 ﻿using NBomber.CSharp;
-using NBomber.Http;
-using NBomber.Http.CSharp;
-using NBomber.Plugins.Network.Ping;
+using OT.Assessment.Api.Models;
 using System.Text;
 using System.Text.Json;
 
 CasinoWagerBogusGenerator casinoWagerBogusGenerator = new();
-
-var results = casinoWagerBogusGenerator.GenerateDummyWagers(10);
-var body = JsonSerializer.Serialize(results);
-
-using var httpClient = new HttpClient();
+List<WagerDTO> results = casinoWagerBogusGenerator.GenerateDummyWagers(10);
 
 var scenario = 
     Scenario.Create("hello_world_scenario", async context =>
     {
         try
         {
-            var request =
-                Http.CreateRequest("POST", "https://ot-assessment-api:5000/api/player/casinowager")
-                    .WithBody(new StringContent(body, Encoding.UTF8, "application/json"));
+            using var httpClient = new HttpClient();
 
-            var response = await Http.Send(httpClient, request);
+            var body = JsonSerializer.Serialize(results);
+            var content = new StringContent(body, Encoding.UTF8, "application/json");
+            var response = await httpClient.PostAsync("http://ot-assessment-api:5000/api/player/casinowager", content);
 
-            if (response.StatusCode == "OK") return Response.Ok();
-
-            Console.WriteLine($"Request failed with status: {response.StatusCode}, Message: {response.Message}");
-
-            return
-                Response.Fail
-                (
-                    body,
-                    response.StatusCode,
-                    response.Message,
-                    response.SizeBytes
-                );
+            if (response.IsSuccessStatusCode) return Response.Ok();
+            return Response.Fail();
         }
-        catch(Exception ex)
+        catch(HttpRequestException ex)
         {
             throw new HttpRequestException($"Failed processing http request with ex: {ex?.InnerException?.Message}");
         }
@@ -56,6 +40,7 @@ try
 {
     NBomberRunner
         .RegisterScenarios(scenario)
+        .WithoutReports()
         .Run();
 }
 catch (Exception ex)

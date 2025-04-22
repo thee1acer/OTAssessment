@@ -1,14 +1,25 @@
+# Build stage
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /app
 
-COPY OT.Assessment.ConsumeCasinoWager.Worker/OT.Assessment.ConsumeCasinoWager.Worker.csproj ./
-RUN dotnet restore "OT.Assessment.ConsumeCasinoWager.Worker.csproj"
+# Copy solution and csproj files only first (for caching restore)
+COPY *.sln ./
+COPY OT.Assessment.ConsumeCasinoWager.Worker/*.csproj OT.Assessment.ConsumeCasinoWager.Worker/
+COPY OT.Assessment.Database/*.csproj OT.Assessment.Database/
 
-COPY OT.Assessment.ConsumeCasinoWager.Worker/. ./
+# Restore dependencies
+RUN dotnet restore "OT.Assessment.ConsumeCasinoWager.Worker/OT.Assessment.ConsumeCasinoWager.Worker.csproj"
+
+# Now copy everything
+COPY . .
+
+# Publish app
+WORKDIR /app/OT.Assessment.ConsumeCasinoWager.Worker
 RUN dotnet publish -c Release -o out
 
+# Runtime image
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /app
-COPY --from=build /app/out .
+COPY --from=build /app/OT.Assessment.ConsumeCasinoWager.Worker/out .
 
 ENTRYPOINT ["dotnet", "OT.Assessment.ConsumeCasinoWager.Worker.dll"]

@@ -1,7 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using OT.Assessment.Configuration;
+﻿using Mapster;
+using Microsoft.AspNetCore.Mvc;
 using OT.Assessment.Api.Models;
+using OT.Assessment.Configuration;
 using OT.Assessment.Services;
+using System.Collections.Generic;
+using System.Text.Json;
 
 namespace OT.Assessment.Controllers;
 
@@ -21,9 +24,19 @@ public class PlayerController : Controller
     [Route(PlayerControllerConfiguration.CasinoWager)]
     [HttpPost]
     [ProducesResponseType(typeof(bool), 200)]
-    public async Task<IActionResult> GetCasinoWagersAsync([FromBody] string listOfWagersJson)
+    public async Task<IActionResult> GetCasinoWagersAsync([FromBody] JsonElement wagerDTOs)
     {
-        return Ok(await _playerService.ProcessCasinoWagersAsync(listOfWagersJson));
+        if (wagerDTOs.GetRawText() != string.Empty)
+        {
+            List<WagerDTO> wagerDTOsMapped = JsonSerializer.Deserialize<List<WagerDTO>>(wagerDTOs.GetRawText()) ?? [];
+
+            if (wagerDTOsMapped.Any())
+            {
+                return Ok(await _playerService.ProcessCasinoWagersAsync(wagerDTOsMapped));
+            }
+        }
+
+        return BadRequest();
     }
 
     [Route(PlayerControllerConfiguration.PlayerWagers)]

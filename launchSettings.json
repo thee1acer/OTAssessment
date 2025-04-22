@@ -5,7 +5,7 @@
       "commandVersion": "1.0",
       "serviceActions": {
         "mssql-server": "StartWithoutDebugging",
-        "ot-assessment-api": "StartDebugging",
+        "ot-assessment-api": "DoNotStart",
         "rabbitmq": "StartWithoutDebugging",
         "redis": "StartWithoutDebugging",
         "ubuntu-agent": "DoNotStart",

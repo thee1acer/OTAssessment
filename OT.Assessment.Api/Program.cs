@@ -1,5 +1,5 @@
+using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using OT.Assessment.Database;
 using OT.Assessment.Database.Helpers;
@@ -13,14 +13,16 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowAll", policy =>
-    {
-        policy.AllowAnyOrigin()
-              .AllowAnyMethod()
-              .AllowAnyHeader();
-    });
-});
+    options.AddPolicy
+    (
+        name: "AllowAll",
+        builder => builder
+            .AllowAnyOrigin()
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .WithExposedHeaders("content-disposition")
+    )
+);
 
 builder.Services.AddOptions<ConnectionString>().BindConfiguration("REFERENCE_DB");
 
@@ -32,8 +34,12 @@ builder.Services.AddDbContext<OTAssessmentContext>((provider, options) =>
     options.UseSqlServer(connectionString, ops => ops.EnableRetryOnFailure());
 });
 
+builder.Services.RegisterServices();
+
 builder.Services.AddTransient<PlayerService>();
 builder.Services.AddSingleton<CasinoWagerProducer>();
+
+builder.Services.AddHealthChecks();
 
 var app = builder.Build();
 
@@ -50,8 +56,9 @@ using (var scope = app.Services.CreateScope())
 }
 
 app.UseCors("AllowAll");
-app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
 
-app.Run();
+app.MapHealthChecks("/health");
+
+app.Run("http://0.0.0.0:5000");

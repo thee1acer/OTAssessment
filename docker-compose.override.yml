@@ -1,11 +1,10 @@
 services:
   ot-assessment-api:
-    labels:
-      com.microsoft.visual-studio.project-name: "OT.Assessment.Api"
     build:
       context: .
       dockerfile: OT.Assessment.Api/Dockerfile
     container_name: ot-assessment-api
+    hostname: ot-assessment-api
     environment:
       - REFERENCE_DB__SERVER=mssql-server
       - REFERENCE_DB__DATABASE_NAME=OTAssessment
@@ -15,8 +14,16 @@ services:
       - ASPNETCORE_URLS=http://+:5000
     ports:
       - "5000:5000"
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      mssql-server:
+        condition: service_started
     networks:
       - ot-assessment-network
+    restart: always
 
   ot-assessment-casino-wager-consumer-worker:
     build:
@@ -24,9 +31,15 @@ services:
       dockerfile: OT.Assessment.ConsumeCasinoWager.Worker/Dockerfile
     container_name: casino-wager-consumer-worker
     depends_on:
-      - rabbitmq
+      rabbitmq:
+        condition: service_healthy
     networks:
       - ot-assessment-network
+    healthcheck:
+      test: ["CMD-SHELL", "pgrep dotnet || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
  
   ot-assessment-casino-wager-producer-worker:
     build:
@@ -34,20 +47,31 @@ services:
       dockerfile: OT.Assessment.ProduceCasinoWager.Worker/Dockerfile
     container_name: casino-wager-producer-worker
     depends_on:
-      - rabbitmq
+      rabbitmq:
+        condition: service_healthy
     networks:
       - ot-assessment-network
+    healthcheck:
+      test: ["CMD-SHELL", "pgrep dotnet || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
   
   ot-assessment-tester:
     build:
       context: .
       dockerfile: OT.Assessment.Tester/Dockerfile
     container_name: ot-assessment-tester
+    hostname: ot-assessment-tester
     depends_on:
-      - ot-assessment-api
+      ot-assessment-api:
+        condition: service_started
     networks:
       - ot-assessment-network
-
+    restart: always
+    healthcheck:
+      start_period: 30s
+  
   mssql-server:
     image: mcr.microsoft.com/mssql/server:2022-latest
     container_name: mssql-server
@@ -64,6 +88,7 @@ services:
   redis:
     image: redis:7.2-alpine
     container_name: redis-tls
+    hostname: redis-tsl
     ports:
       - "6379:6379"
     volumes:
@@ -73,6 +98,11 @@ services:
     command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
     networks:
       - ot-assessment-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "5tr0ngP@55w0rD", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   rabbitmq:
     image: rabbitmq:3-management
@@ -87,6 +117,11 @@ services:
       - rabbitmq_data:/var/lib/rabbitmq
     networks:
       - ot-assessment-network
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "check_running"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
 volumes:
   rabbitmq_data:
@@ -97,5 +132,5 @@ volumes:
   
 networks:
   ot-assessment-network:
-    name: shared-network
+    name: ot-assessment-network
     driver: bridge

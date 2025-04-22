@@ -19,29 +19,36 @@ public class CasinoWagerProducer
             Password = Environment.GetEnvironmentVariable("RABBITMQ_PASSWORD")!,
         };
 
-        await using var connection = await factory.CreateConnectionAsync();
-        await using var channel = await connection.CreateChannelAsync();
+        try
+        {
+            await using var connection = await factory.CreateConnectionAsync();
+            await using var channel = await connection.CreateChannelAsync();
 
-        await channel.QueueDeclareAsync
-        (
-            queue: "my-queue",
-            durable: false,
-            exclusive: false,
-            autoDelete: false,
-            arguments: null
-        );
+            await channel.QueueDeclareAsync
+            (
+                queue: "my-queue",
+                durable: false,
+                exclusive: false,
+                autoDelete: false,
+                arguments: null
+            );
 
-        var body = Encoding.UTF8.GetBytes(message);
+            var body = Encoding.UTF8.GetBytes(message);
 
-        await channel.BasicPublishAsync(
-            exchange: "",
-            routingKey: "my-queue",
-            mandatory: true,
-            basicProperties: new BasicProperties(),
-            body: body
-        );
+            await channel.BasicPublishAsync(
+                exchange: "",
+                routingKey: "my-queue",
+                mandatory: true,
+                basicProperties: new BasicProperties(),
+                body: body
+            );
 
-        Console.WriteLine($" [x] Sent: {message}");
+            Console.WriteLine($"[#] Sent message [#] {DateTime.Now}");
+        }
+        catch(Exception ex)
+        {
+            throw new Exception($"Failed to produce to RabbitQ with exception: {ex}");
+        }
     }
 }
 

@@ -3,11 +3,21 @@ using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using Microsoft.Extensions.Hosting;
 using DotNetEnv;
+using OT.Assessment.Database.Services;
+using System.Text.Json;
+using OT.Assessment.Database.Models;
 
 namespace OT.Assessment.ConsumeCasinoWager.Worker.Services;
 
 public class CasinoWagerConsumer : BackgroundService
 {
+    private CasinoWagersService _casinoWagersService;
+
+    public CasinoWagerConsumer(CasinoWagersService casinoWagersService)
+    {
+        _casinoWagersService = casinoWagersService;
+    }
+
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         Env.Load();
@@ -20,38 +30,50 @@ public class CasinoWagerConsumer : BackgroundService
             Password = Environment.GetEnvironmentVariable("RABBITMQ_PASSWORD")!,
         };
 
-        await using var connection = await factory.CreateConnectionAsync();
-        await using var channel = await connection.CreateChannelAsync();
-
-        await channel.QueueDeclareAsync
-        (
-            queue: "my-queue",
-            durable: false,
-            exclusive: false,
-            autoDelete: false,
-            arguments: null
-        );
-
-        var consumer = new AsyncEventingBasicConsumer(channel);
-        consumer.ReceivedAsync += async (sender, ea) =>
+        try
         {
-            var body = ea.Body.ToArray();
-            var message = Encoding.UTF8.GetString(body);
+            await using var connection = await factory.CreateConnectionAsync();
+            await using var channel = await connection.CreateChannelAsync();
 
-            Console.WriteLine($" [x] Received: {message}");
-            
-            await Task.CompletedTask;
-        };
+            await channel.QueueDeclareAsync
+            (
+                queue: "my-queue",
+                durable: false,
+                exclusive: false,
+                autoDelete: false,
+                arguments: null
+            );
 
-        await channel.BasicConsumeAsync
-        (
-            queue: "my-queue",
-            autoAck: true,
-            consumer: consumer
-        );
+            var consumer = new AsyncEventingBasicConsumer(channel);
 
-        Console.WriteLine(" [*] Waiting for messages. To exit press CTRL+C");
+            consumer.ReceivedAsync += async (sender, ea) =>
+            {
+                var body = ea.Body.ToArray();
+                var message = Encoding.UTF8.GetString(body);
 
-        await Task.Delay(Timeout.Infinite, stoppingToken);
+                var wagers = JsonSerializer.Deserialize<List<Wager>>(message);
+
+                if (wagers?.Any() ?? false)
+                {
+                    await _casinoWagersService.InsertCasinoWagers(wagers);
+
+                    Console.WriteLine($"[#] Received: {DateTime.Now} [#]");
+                    await Task.CompletedTask;
+                }
+            };
+
+            await channel.BasicConsumeAsync
+            (
+                queue: "my-queue",
+                autoAck: true,
+                consumer: consumer
+            );
+
+            await Task.Delay(Timeout.Infinite, stoppingToken);
+        }
+        catch(Exception ex)
+        {
+            throw new Exception($"Failed to consume with error: {ex}");
+        }
     }
 }
