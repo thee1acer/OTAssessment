@@ -41,10 +41,10 @@ public class PlayerController : Controller
 
     [Route(PlayerControllerConfiguration.PlayerWagers)]
     [HttpGet]
-    [ProducesResponseType(typeof(List<WagerDTO>), 200)]
-    public async Task<IActionResult> GetPlayerWagersByIdAsync(int playerId)
+    [ProducesResponseType(typeof(CasinoWagersDTO), 200)]
+    public async Task<IActionResult> GetPlayerWagersByIdAsync(Guid playerId, int page, int pageSize)
     {
-        return Ok(await _playerService.GetPlayerWagersByIdAsync(playerId));
+        return Ok(await _playerService.GetPlayerWagersByIdAsync(playerId, page, pageSize));
     }
 
     [Route(PlayerControllerConfiguration.TopSpenders)]
