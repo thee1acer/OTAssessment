@@ -4,13 +4,6 @@ using OT.Assessment.Database.Models;
 
 public class CasinoWagerBogusGenerator
 {
-    /*private readonly ILogger _logger;
-    private OTAssessmentContext _oTAssessmentContext;
-    public CasinoWagerBogusGenerator(OTAssessmentContext oTAssessmentContext, ILogger<CasinoWagerBogusGenerator> logger)
-    {
-        _oTAssessmentContext = oTAssessmentContext;
-        _logger = logger;
-    }*/
     public CasinoWagerBogusGenerator() { }
 
     public List<WagerDTO> GenerateDummyWagers(int numberOfWagers)
@@ -40,20 +33,32 @@ public class CasinoWagerBogusGenerator
             .RuleFor(u => u.Email, f => f.Internet.Email());
         var users = userFaker.Generate(20);
 
+        var transactionTypeFaker = new Faker<TransactionTypeDTO>()
+            .RuleFor(t => t.Id, f => Guid.NewGuid())
+            .RuleFor(t => t.Name, f => f.Random.Word())
+            .RuleFor(t => t.Description, f => f.Rant.Review());
+        var transactionsTypes = transactionTypeFaker.Generate(3);
+
         var transactionFaker = new Faker<TransactionDTO>()
             .RuleFor(t => t.Id, f => Guid.NewGuid())
             .RuleFor(t => t.Amount, f => f.Random.Double(5, 500))
             .RuleFor(t => t.NumberOfBets, f => f.Random.Number(5, 100))
             .RuleFor(t => t.CreatedDateTime, f => f.Date.Past(1))
+            
             .RuleFor(t => t.User, f => f.PickRandom(users))
-            .RuleFor(t => t.UserId, (f, t) => t.User.Id);
+            .RuleFor(t => t.UserId, (f, t) => t.User.Id)
+
+            .RuleFor(t => t.Type, f => f.PickRandom(transactionsTypes))
+            .RuleFor(t => t.TransactionTypeId, (f, t) => t.Type.Id);
         var transactions = transactionFaker.Generate(50);
 
         var gameFaker = new Faker<GameDTO>()
             .RuleFor(g => g.Id, f => Guid.NewGuid())
             .RuleFor(g => g.Name, f => f.Commerce.ProductName())
+
             .RuleFor(g => g.Theme, f => f.PickRandom(themes))
             .RuleFor(g => g.ThemeId, (f, t) => t.Theme.Id)
+            
             .RuleFor(g => g.Provider, f => f.PickRandom(providers))
             .RuleFor(g => g.ProviderId, (f, x) => x.Provider.Id);
         var games = gameFaker.Generate(20);
@@ -62,11 +67,21 @@ public class CasinoWagerBogusGenerator
             .RuleFor(w => w.Id, f => Guid.NewGuid())
             .RuleFor(w => w.SessionData, f => f.Lorem.Sentence())
             .RuleFor(w => w.Duration, f => f.Random.Long(1000, 5000))
-            .RuleFor(w => w.ThemeId, f => f.PickRandom(themes).Id)
-            .RuleFor(w => w.ProviderId, f => f.PickRandom(providers).Id)
-            .RuleFor(w => w.GameId, f => f.PickRandom(games).Id)
-            .RuleFor(w => w.TransactionId, f => f.PickRandom(transactions).Id)
-            .RuleFor(w => w.CountryId, f => f.PickRandom(countries).Id);
+            
+            .RuleFor(w => w.Theme, f => f.PickRandom(themes))
+            .RuleFor(w => w.ThemeId, (f, t) => t.Theme.Id)
+            
+            .RuleFor(w => w.Provider, f => f.PickRandom(providers))
+            .RuleFor(w => w.ProviderId, (f, t) => t.Provider.Id)
+
+            .RuleFor(w => w.Game, f => f.PickRandom(games))
+            .RuleFor(w => w.GameId, (f, t) => t.Game.Id)
+            
+            .RuleFor(w => w.Transaction, f => f.PickRandom(transactions))
+            .RuleFor(w => w.TransactionId, (f, t) => t.Transaction.Id)
+
+            .RuleFor(w => w.Country, f => f.PickRandom(countries))
+            .RuleFor(w => w.CountryId, (f, t) => t.Country.Id);
         var wagers = wagerFaker.Generate(numberOfWagers);
 
         return wagers;
