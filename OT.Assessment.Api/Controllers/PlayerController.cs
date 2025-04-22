@@ -6,7 +6,7 @@ using OT.Assessment.Services;
 namespace OT.Assessment.Controllers;
 
 [ApiController]
-[Route("api/player")]
+[Route(PlayerControllerConfiguration.PlayerController)]
 public class PlayerController : Controller
 {
     private readonly ILogger<PlayerController> _logger;

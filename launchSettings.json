@@ -9,9 +9,9 @@
         "rabbitmq": "StartWithoutDebugging",
         "redis": "StartWithoutDebugging",
         "ubuntu-agent": "DoNotStart",
-        "ot-assessment-casino-wager-consumer-worker": "StartWithoutDebugging",
-        "ot-assessment-casino-wager-producer-worker": "StartWithoutDebugging",
-        "ot-assessment-tester": "StartWithoutDebugging"
+        "ot-assessment-casino-wager-consumer-worker": "StartDebugging",
+        "ot-assessment-casino-wager-producer-worker": "StartDebugging",
+        "ot-assessment-tester": "StartDebugging"
       }
     }
   }

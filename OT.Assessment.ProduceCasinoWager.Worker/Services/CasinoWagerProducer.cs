@@ -1,5 +1,7 @@
 ﻿using System.Text;
 using RabbitMQ.Client;
+using DotNetEnv;
+
 
 namespace OT.Assessment.ProduceCasinoWager.Worker.Services;
 
@@ -7,6 +9,8 @@ public class CasinoWagerProducer
 {
     public async Task SendMessageAsync(string message)
     {
+        Env.Load();
+
         var factory = new ConnectionFactory()
         {
             HostName = Environment.GetEnvironmentVariable("RABBITMQ_HOST")!,

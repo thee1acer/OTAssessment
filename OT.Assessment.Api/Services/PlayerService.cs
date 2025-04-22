@@ -21,7 +21,7 @@ public class PlayerService
 
     public async Task<bool> ProcessCasinoWagersAsync(string listOfWagersJson)
     {
-        List<WagerDTO> mappedWagers = JsonSerializer.Deserialize<List<WagerDTO>>(listOfWagersJson) ?? new List<WagerDTO>();
+        await _casinoWagerProducer.SendMessageAsync(listOfWagersJson);
 
         return true;
     }

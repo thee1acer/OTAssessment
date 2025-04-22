@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using OT.Assessment.Database;
 
@@ -11,9 +12,11 @@ using OT.Assessment.Database;
 namespace OT.Assessment.Database.Migrations
 {
     [DbContext(typeof(OTAssessmentContext))]
-    partial class OTAssessmentContextModelSnapshot : ModelSnapshot
+    [Migration("20250421225844_Added_Proofing_To_DB_Models")]
+    partial class Added_Proofing_To_DB_Models
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

@@ -363,3 +363,4 @@ MigrationBackup/
 FodyWeavers.xsd
 
 .env
+/OT.Assessment.Tester/reports

@@ -2,6 +2,7 @@
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using Microsoft.Extensions.Hosting;
+using DotNetEnv;
 
 namespace OT.Assessment.ConsumeCasinoWager.Worker.Services;
 
@@ -9,6 +10,8 @@ public class CasinoWagerConsumer : BackgroundService
 {
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
+        Env.Load();
+
         var factory = new ConnectionFactory()
         {
             HostName = Environment.GetEnvironmentVariable("RABBITMQ_HOST")!,
