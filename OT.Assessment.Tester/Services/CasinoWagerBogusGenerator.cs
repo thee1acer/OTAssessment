@@ -7,15 +7,26 @@ public class CasinoWagerBogusGenerator
     public CasinoWagerBogusGenerator() { }
 
     public List<WagerDTO> GenerateDummyWagers(int numberOfWagers)
-    {
+    {  
         var providerFaker = new Faker<ProviderDTO>()
             .RuleFor(p => p.Id, f => Guid.NewGuid())
             .RuleFor(p => p.Name, f => f.Company.CompanyName());
         var providers = providerFaker.Generate(10);  
 
+        var themeNames = new List<string>
+        {
+            "ancient",
+            "adventure",
+            "wildlife",
+            "jungle",
+            "retro",
+            "family",
+            "crash"
+        };
+
         var themeFaker = new Faker<ThemeDTO>()
             .RuleFor(t => t.Id, f => Guid.NewGuid())
-            .RuleFor(t => t.Name, f => f.Commerce.Department());
+            .RuleFor(t => t.Name, f => f.PickRandom(themeNames));
         var themes = themeFaker.Generate(5); 
 
         var countryFaker = new Faker<CountryDTO>()
@@ -29,7 +40,7 @@ public class CasinoWagerBogusGenerator
             .RuleFor(u => u.Surname, f => f.Person.LastName)
             .RuleFor(u => u.UserName, f => f.Person.UserName)
             .RuleFor(u => u.Phone, f => f.Person.Phone)
-            .RuleFor(u => u.Age, f => (DateTime.Now.Year - f.Person.DateOfBirth.Year))
+            .RuleFor(u => u.Age, f => DateTime.Now.Year - f.Person.DateOfBirth.Year)
             .RuleFor(u => u.Email, f => f.Internet.Email());
         var users = userFaker.Generate(20);
 
@@ -65,23 +76,28 @@ public class CasinoWagerBogusGenerator
 
         var wagerFaker = new Faker<WagerDTO>()
             .RuleFor(w => w.Id, f => Guid.NewGuid())
+
+            .RuleFor(w => w.Theme, f => f.PickRandom(themes).Name)
+            .RuleFor(w => w.Provider, f => f.PickRandom(providers).Name)            
+            .RuleFor(w => w.GameName, f => f.PickRandom(games).Name)
+            
+            .RuleFor(w => w.TransactionId, f =>  Guid.NewGuid())
+            .RuleFor(w => w.BrandId, f => f.Random.Guid())
+            .RuleFor(w => w.AccountId, f => f.Random.Guid())
+            
+            .RuleFor(w => w.UserName, f => f.Internet.UserName())
+
+            .RuleFor(w => w.ExternalReferenceId, f => Guid.NewGuid())
+            .RuleFor(w => w.TransactionTypeId, f => Guid.NewGuid())
+
+            .RuleFor(w => w.Amount, f => f.Random.Double(1.0, 1000.0))
+            
+            .RuleFor(w => w.CreatedDateTime, f => f.Date.RecentOffset(days: 10).DateTime)
+            
+            .RuleFor(w => w.NumberOfBets, f => f.Random.Int(1, 10))
             .RuleFor(w => w.SessionData, f => f.Lorem.Sentence())
-            .RuleFor(w => w.Duration, f => f.Random.Long(1000, 5000))
-            
-            .RuleFor(w => w.Theme, f => f.PickRandom(themes))
-            .RuleFor(w => w.ThemeId, (f, t) => t.Theme.Id)
-            
-            .RuleFor(w => w.Provider, f => f.PickRandom(providers))
-            .RuleFor(w => w.ProviderId, (f, t) => t.Provider.Id)
+            .RuleFor(w => w.Duration, f => f.Random.Long(1000, 5000));
 
-            .RuleFor(w => w.Game, f => f.PickRandom(games))
-            .RuleFor(w => w.GameId, (f, t) => t.Game.Id)
-            
-            .RuleFor(w => w.Transaction, f => f.PickRandom(transactions))
-            .RuleFor(w => w.TransactionId, (f, t) => t.Transaction.Id)
-
-            .RuleFor(w => w.Country, f => f.PickRandom(countries))
-            .RuleFor(w => w.CountryId, (f, t) => t.Country.Id);
         var wagers = wagerFaker.Generate(numberOfWagers);
 
         return wagers;

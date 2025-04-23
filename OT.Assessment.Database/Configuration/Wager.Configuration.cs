@@ -2,52 +2,31 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using OT.Assessment.Database.Models;
 
-namespace OT.Assessment.Database.Configurations;
-
 public class WagerConfiguration : IEntityTypeConfiguration<Wager>
 {
     public void Configure(EntityTypeBuilder<Wager> builder)
     {
-        builder.ToTable("Wagers");
+        builder.HasKey(w => w.Id);
 
-        builder.HasKey(x => x.Id);
+        builder.HasAlternateKey(w => new
+        {
+            w.TransactionId,
+            w.ExternalReferenceId
+        });
 
-        builder.Property(x => x.Id).ValueGeneratedOnAdd();
-        builder.Property(x => x.SessionData).IsRequired();
-        builder.Property(x => x.Duration).IsRequired();
+        builder.Property(w => w.Theme).IsRequired().HasMaxLength(100);
+        builder.Property(w => w.Provider).IsRequired().HasMaxLength(100);
+        builder.Property(w => w.GameName).IsRequired().HasMaxLength(100);
+        builder.Property(w => w.UserName).IsRequired().HasMaxLength(100);
+        builder.Property(w => w.CountryCode).IsRequired().HasMaxLength(5);
+        builder.Property(w => w.SessionData).IsRequired().HasMaxLength(500);
+        builder.Property(w => w.Amount).IsRequired();
+        builder.Property(w => w.CreatedDateTime).IsRequired();
+        builder.Property(w => w.NumberOfBets).IsRequired();
+        builder.Property(w => w.Duration).IsRequired();
 
-        builder.Property(x => x.ThemeId).IsRequired();
-        builder.HasOne(x => x.Theme)
-               .WithMany() 
-               .HasForeignKey(x => x.ThemeId)
-               .OnDelete(DeleteBehavior.Restrict);
-        
-        builder.Property(x => x.ProviderId).IsRequired();
-        builder.HasOne(x => x.Provider)
-               .WithMany()
-               .HasForeignKey(x => x.ProviderId)
-               .OnDelete(DeleteBehavior.Restrict);
-
-        builder.Property(x => x.GameId).IsRequired();
-        builder.HasOne(x => x.Game)
-               .WithMany()
-               .HasForeignKey(x => x.GameId)
-               .OnDelete(DeleteBehavior.Restrict);
-
-        builder.Property(x => x.TransactionId).IsRequired();
-        builder.HasOne(x => x.Transaction)
-               .WithMany()
-               .HasForeignKey(x => x.TransactionId)
-               .OnDelete(DeleteBehavior.Cascade);
-
-        builder.Property(x => x.CountryId).IsRequired();
-        builder.HasOne(x => x.Country)
-               .WithMany()
-               .HasForeignKey(x => x.CountryId)
-               .OnDelete(DeleteBehavior.Restrict);
-
-        builder.HasIndex(x => x.GameId);
-        builder.HasIndex(x => x.TransactionId);
-        builder.HasIndex(x => x.CountryId);
+        builder.HasIndex(w => w.TransactionId);
+        builder.HasIndex(w => w.ExternalReferenceId);
+        builder.HasIndex(w => w.CreatedDateTime);
     }
 }

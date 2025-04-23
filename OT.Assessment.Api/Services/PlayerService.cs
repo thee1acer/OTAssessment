@@ -50,8 +50,6 @@ public class PlayerService
         var transactionIds = transactions.Select(v => v.Id).ToList();
 
         var wagers = await _dbContext.Wagers
-            .Include(v => v.Transaction)
-            .Include(v => v.Game)
             .Where(v => transactionIds.Contains(v.TransactionId))
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
@@ -65,10 +63,10 @@ public class PlayerService
                 v =>
                 new CasinoWagerDTO
                 {
-                    Amount = v.Transaction.Amount,
-                    CreatedDate = v.Transaction.CreatedDateTime,
-                    Game = v.Game.Name,
-                    Provider = v.Provider.Name,
+                    Amount = v.Amount,
+                    CreatedDate = v.CreatedDateTime,
+                    Game = v.GameName,
+                    Provider = v.Provider,
                     WagerId = v.Id,
                 }
             ).ToList();
@@ -89,21 +87,18 @@ public class PlayerService
     {
         if (count == 0) return [];
 
-        var transactions = await _dbContext.Transactions
-            .Include(v => v.User)
+        var wagers = await _dbContext.Wagers
             .OrderByDescending(v => v.Amount)
                 .Take(count)
             .ToListAsync();
 
-        if (!transactions.Any()) return [];
-
-        var result = transactions.Select
+        var result = wagers.Select
             (
                 v =>
                     new SpenderDTO
                     {
-                        AccountId = v.User.AccountId,
-                        UserName = v.User.UserName,
+                        AccountId = v.AccountId,
+                        UserName = v.UserName,
                         TotalAmountSpend = v.Amount
                     }
             ).ToList();
