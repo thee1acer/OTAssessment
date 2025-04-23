@@ -18,18 +18,22 @@ public class CasinoWagersService
     {
         try
         {
+            _logger.LogDebug("[#] Inserting into DB [#] ");
+
             await _dbContext.Wagers.AddRangeAsync(wagers);
             await _dbContext.SaveChangesAsync();
+            
+            _logger.LogDebug("[#] Inserting into DB done![#] ");
             return true;
         }
         catch (DbUpdateException dbEx)
         {
-            _logger.LogError(dbEx, "Database update failed while inserting casino wagers.");
+            _logger.LogError($"Database update failed while inserting casino wagers. {dbEx}");
             return false;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "An unexpected error occurred while inserting casino wagers.");
+            _logger.LogError($"An unexpected error occurred while inserting casino wagers: {ex}");
             return false;
         }
     }

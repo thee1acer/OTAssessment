@@ -22,9 +22,19 @@ public class PlayerService
 
     public async Task<bool> ProcessCasinoWagersAsync(List<WagerDTO> wagerDTOs)
     {
-        await _casinoWagerProducer.SendMessageAsync(JsonSerializer.Serialize(wagerDTOs));
+        try
+        {
+            var message = JsonSerializer.Serialize(wagerDTOs);
+            await _casinoWagerProducer.SendMessageAsync(message);
 
-        return true;
+            _logger.LogDebug("[#] Successfully serialized and published message [#]");
+            return true;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError("[#] Failed to serialize dtos[#]");
+            return false;
+        }        
     }
 
     public async Task<CasinoWagersDTO?> GetPlayerWagersByIdAsync(Guid playerId, int page, int pageSize)

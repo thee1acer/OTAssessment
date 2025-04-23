@@ -6,16 +6,20 @@ using DotNetEnv;
 using OT.Assessment.Database.Services;
 using System.Text.Json;
 using OT.Assessment.Database.Models;
+using Microsoft.Extensions.Logging;
 
 namespace OT.Assessment.ConsumeCasinoWager.Worker.Services;
 
 public class CasinoWagerConsumer : BackgroundService
 {
     private CasinoWagersService _casinoWagersService;
+    private ILogger<CasinoWagerConsumer> _logger;
 
-    public CasinoWagerConsumer(CasinoWagersService casinoWagersService)
+
+    public CasinoWagerConsumer(CasinoWagersService casinoWagersService, ILogger<CasinoWagerConsumer> logger)
     {
         _casinoWagersService = casinoWagersService;
+        _logger = logger;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -57,9 +61,12 @@ public class CasinoWagerConsumer : BackgroundService
                 {
                     await _casinoWagersService.InsertCasinoWagersAsync(wagers);
 
-                    Console.WriteLine($"[#] Received: {DateTime.Now} [#]");
+                    _logger.LogDebug($"[#] Received: {DateTime.Now} [#]");
+
                     await Task.CompletedTask;
                 }
+                
+                _logger.LogDebug($"[#] Received a empty strying [#]");
             };
 
             await channel.BasicConsumeAsync
@@ -73,7 +80,7 @@ public class CasinoWagerConsumer : BackgroundService
         }
         catch(Exception ex)
         {
-            throw new Exception($"Failed to consume with error: {ex}");
+            _logger.LogError($"Failed to consume with error: {ex}");
         }
     }
 }

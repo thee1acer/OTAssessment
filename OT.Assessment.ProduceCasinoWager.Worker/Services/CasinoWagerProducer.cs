@@ -1,12 +1,20 @@
 ﻿using System.Text;
 using RabbitMQ.Client;
 using DotNetEnv;
+using Microsoft.Extensions.Logging;
 
 
 namespace OT.Assessment.ProduceCasinoWager.Worker.Services;
 
 public class CasinoWagerProducer
 {
+    private ILogger<CasinoWagerProducer> _logger;
+
+    public CasinoWagerProducer(ILogger<CasinoWagerProducer> logger)
+    {
+        _logger = logger;
+    }
+
     public async Task SendMessageAsync(string message)
     {
         Env.Load();
@@ -43,11 +51,11 @@ public class CasinoWagerProducer
                 body: body
             );
 
-            Console.WriteLine($"[#] Sent message [#] {DateTime.Now}");
+            _logger.LogDebug($"[#] Sent message [#] {DateTime.Now}");
         }
         catch(Exception ex)
         {
-            throw new Exception($"Failed to produce to RabbitQ with exception: {ex}");
+            _logger.LogError($"Failed to produce to RabbitQ with exception: {ex}");
         }
     }
 }

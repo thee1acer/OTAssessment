@@ -9,14 +9,10 @@ using System.Text.Json;
 CasinoWagerBogusGenerator casinoWagerBogusGenerator = new();
 List<WagerDTO> results = casinoWagerBogusGenerator.GenerateDummyWagers(10);
 
-using var httpClient = new HttpClient();
-var healthReady = await httpClient.GetAsync("http://ot-assessment-api:5000/health");
+using var httpClient = new HttpClient { Timeout = TimeSpan.FromMinutes(10) };
 
-if (healthReady.IsSuccessStatusCode)
-{
-    Console.WriteLine("API not ready. Exiting.");
-    //return;
-}
+httpClient.DefaultRequestHeaders.Connection.Clear();
+httpClient.DefaultRequestHeaders.Connection.Add("keep-alive");
 
 var scenario =
     Scenario.Create("casino_wager_scenario", async context =>

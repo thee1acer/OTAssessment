@@ -32,8 +32,11 @@ public class PlayerController : Controller
 
             if (wagerDTOsMapped.Any())
             {
+                _logger.LogDebug("[#] Founf wagers and now processing.. [#]");
                 return Ok(await _playerService.ProcessCasinoWagersAsync(wagerDTOsMapped));
             }
+            
+            _logger.LogDebug("[#] Now wagers founf [#]");
         }
 
         return BadRequest();
