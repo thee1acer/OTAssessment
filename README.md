@@ -40,14 +40,35 @@ Make sure you have the following tools installed:
 
 Follow these steps to set up and run the system:
 
-1. **Clone the Repository:**
+1. **Clone the Repository and Secrets:**
+   Clone the repo
 
    ```bash
    git clone https://github.com/thee1acer/OTAssessment.git
    cd OTAssessment
    ```
 
-2. **Build and Run the Docker Containers:**
+   Add secrets file ```.env``` in your root folder with fields:
+   ```bash
+      REFERENCE_DB__SERVER="mssql-server"
+      REFERENCE_DB__DATABASE_NAME="OTAssessment"
+      REFERENCE_DB__USER="sa"
+      REFERENCE_DB__PASSWORD="5tr0ngP@55w0rD"
+      
+      ASPNETCORE_ENVIRONMENT="Development"
+      
+      RABBITMQ_HOST = "rabbitmq"
+      RABBITMQ_PORT = "5672"
+      RABBITMQ_USERNAME = "default"
+      RABBITMQ_PASSWORD = "5tr0ngP@55w0rD"
+      
+      REDIS_HOST="redis-tsl"
+      REDIS_PORT="6379"
+      REDIS_USERNAME="default"
+      REDIS_PASSWORD="5tr0ngP@55w0rD"
+   ```
+
+3. **Build and Run the Docker Containers:**
 
    The project uses Docker for containerization. On mounting the solution ensure you Docker Application is running.
 
@@ -62,7 +83,7 @@ Follow these steps to set up and run the system:
    - **Producer Worker:** A container that sends events from the API to the RabbitMQ queue.
    - **Consumer Worker:** A container that processes messages from the RabbitMQ queue and populates the database.
 
-3. **Running the Load Test:**
+4. **Running the Load Test:**
 
    Once everything is set up, on application start the bomber will wait for the api to start before it can flood it with events.
 
