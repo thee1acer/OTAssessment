@@ -31,7 +31,7 @@ public class CasinoWagerBogusGenerator
 
         var countryFaker = new Faker<CountryDTO>()
             .RuleFor(c => c.Id, f => Guid.NewGuid())
-            .RuleFor(c => c.Code, f => f.Address.Country());
+            .RuleFor(c => c.Code, f => f.Address.CountryCode());
         var countries = countryFaker.Generate(5);
 
         var userFaker = new Faker<UserDTO>()
@@ -96,10 +96,11 @@ public class CasinoWagerBogusGenerator
             
             .RuleFor(w => w.NumberOfBets, f => f.Random.Int(1, 10))
             .RuleFor(w => w.SessionData, f => f.Lorem.Sentence())
+            .RuleFor(w => w.CountryCode, f => f.PickRandom(countries).Code)
             .RuleFor(w => w.Duration, f => f.Random.Long(1000, 5000));
 
         var wagers = wagerFaker.Generate(numberOfWagers);
 
-        return wagers;
+        return wagers.DistinctBy(v => v.Id).ToList();
     }
 }

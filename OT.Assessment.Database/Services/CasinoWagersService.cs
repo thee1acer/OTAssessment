@@ -20,7 +20,18 @@ public class CasinoWagersService
         {
             _logger.LogDebug("[#] Inserting into DB [#] ");
 
-            await _dbContext.Wagers.AddRangeAsync(wagers);
+            var bomberIds = wagers.Select(w => w.Id).ToList();
+
+            var existingIds = await _dbContext.Wagers
+                .Where(w => bomberIds.Contains(w.Id))
+                .Select(w => w.Id)
+                .ToListAsync();
+
+            var newWagers = wagers
+                .Where(w => !existingIds.Contains(w.Id))
+                .ToList();
+            
+            await _dbContext.Wagers.AddRangeAsync(newWagers);
             await _dbContext.SaveChangesAsync();
             
             _logger.LogDebug("[#] Inserting into DB done![#] ");
