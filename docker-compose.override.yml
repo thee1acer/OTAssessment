@@ -11,9 +11,9 @@ services:
       - REFERENCE_DB__USER=sa
       - REFERENCE_DB__PASSWORD=5tr0ngP@55w0rD
       - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=http://+:5000
+      - ASPNETCORE_URLS=http://0.0.0.0:5000
     ports:
-      - "5000:5000"
+      - 5000
     depends_on:
       rabbitmq:
         condition: service_healthy
@@ -68,9 +68,6 @@ services:
         condition: service_started
     networks:
       - ot-assessment-network
-    restart: always
-    healthcheck:
-      start_period: 30s
   
   mssql-server:
     image: mcr.microsoft.com/mssql/server:2022-latest

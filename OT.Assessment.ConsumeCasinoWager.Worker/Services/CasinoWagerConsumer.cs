@@ -55,7 +55,7 @@ public class CasinoWagerConsumer : BackgroundService
 
                 if (wagers?.Any() ?? false)
                 {
-                    await _casinoWagersService.InsertCasinoWagers(wagers);
+                    await _casinoWagersService.InsertCasinoWagersAsync(wagers);
 
                     Console.WriteLine($"[#] Received: {DateTime.Now} [#]");
                     await Task.CompletedTask;

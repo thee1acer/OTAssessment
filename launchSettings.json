@@ -3,9 +3,12 @@
     "Docker Compose": {
       "commandName": "DockerCompose",
       "commandVersion": "1.0",
+      "composeLaunchAction": "LaunchBrowser",
+      "composeLaunchServiceName": "ot-assessment-api",
+      "composeLaunchUrl": "{Scheme}://localhost:{ServicePort}/swagger/index.html",
       "serviceActions": {
         "mssql-server": "StartWithoutDebugging",
-        "ot-assessment-api": "DoNotStart",
+        "ot-assessment-api": "StartDebugging",
         "rabbitmq": "StartWithoutDebugging",
         "redis": "StartWithoutDebugging",
         "ubuntu-agent": "DoNotStart",
