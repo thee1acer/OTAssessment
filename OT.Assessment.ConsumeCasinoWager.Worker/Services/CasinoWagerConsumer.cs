@@ -7,6 +7,8 @@ using OT.Assessment.Database.Services;
 using System.Text.Json;
 using OT.Assessment.Database.Models;
 using Microsoft.Extensions.Logging;
+using OT.Assessment.Api.Models;
+using Mapster;
 
 namespace OT.Assessment.ConsumeCasinoWager.Worker.Services;
 
@@ -55,11 +57,12 @@ public class CasinoWagerConsumer : BackgroundService
                 var body = ea.Body.ToArray();
                 var message = Encoding.UTF8.GetString(body);
 
-                var wagers = JsonSerializer.Deserialize<List<Wager>>(message);
+                var wagers = JsonSerializer.Deserialize<List<WagerDTO>>(message);
+                var wagersMapped = wagers.Adapt<List<Wager>>().ToList();
 
                 if (wagers?.Any() ?? false)
                 {
-                    await _casinoWagersService.InsertCasinoWagersAsync(wagers);
+                    await _casinoWagersService.InsertCasinoWagersAsync(wagersMapped);
 
                     _logger.LogDebug($"[#] Received: {DateTime.Now} [#]");
 
