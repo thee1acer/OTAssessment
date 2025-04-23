@@ -8,6 +8,8 @@ namespace OT.Assessment.Database.Configurations
     {
         public void Configure(EntityTypeBuilder<Game> builder)
         {
+            builder.ToTable("Games");
+
             builder.HasKey(g => g.Id);
 
             builder.Property(g => g.Id).ValueGeneratedOnAdd();

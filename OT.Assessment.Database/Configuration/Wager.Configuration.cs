@@ -6,6 +6,8 @@ public class WagerConfiguration : IEntityTypeConfiguration<Wager>
 {
     public void Configure(EntityTypeBuilder<Wager> builder)
     {
+        builder.ToTable("Wagers");
+        
         builder.HasKey(w => w.Id);
 
         builder.HasAlternateKey(w => new

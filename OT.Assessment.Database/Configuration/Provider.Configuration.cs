@@ -8,6 +8,8 @@ namespace OT.Assessment.Database.Configurations
     {
         public void Configure(EntityTypeBuilder<Provider> builder)
         {
+            builder.ToTable("Providers");
+
             builder.HasKey(p => p.Id);
             builder.HasAlternateKey(p => p.Name);
             
