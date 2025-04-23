@@ -37,20 +37,12 @@ public class PlayerService
         }        
     }
 
-    public async Task<CasinoWagersDTO?> GetPlayerWagersByIdAsync(Guid playerId, int page, int pageSize)
+    public async Task<CasinoWagersDTO?> GetPlayerWagersByIdAsync(string userName, int page, int pageSize)
     {
         if (page == 0) return default;
 
-        var transactions = await _dbContext.Transactions
-            .Where(v => v.UserId == playerId)
-                .ToListAsync();
-
-        if (!transactions.Any()) return default;
-
-        var transactionIds = transactions.Select(v => v.Id).ToList();
-
         var wagers = await _dbContext.Wagers
-            .Where(v => transactionIds.Contains(v.TransactionId))
+            .Where(v => v.UserName == userName)
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
             .ToListAsync();
