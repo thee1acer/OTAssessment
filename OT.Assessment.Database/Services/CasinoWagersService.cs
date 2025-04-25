@@ -22,7 +22,7 @@ public class CasinoWagersService
 
             var bomberIds = wagers.Select(w => w.Id).ToList();
 
-            var existingIds = await _dbContext.Wagers
+           var existingIds = await _dbContext.Wagers
                 .Where(w => bomberIds.Contains(w.Id))
                 .Select(w => w.Id)
                 .ToListAsync();

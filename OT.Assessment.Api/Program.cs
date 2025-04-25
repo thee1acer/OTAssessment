@@ -48,11 +48,19 @@ app.UseSwaggerUI();
 
 using (var scope = app.Services.CreateScope())
 {
-    var services = scope.ServiceProvider;
-    var context = services.GetRequiredService<OTAssessmentContext>();
+    try
+    {
+        var services = scope.ServiceProvider;
+        var context = services.GetRequiredService<OTAssessmentContext>();
 
-    //context.Database.EnsureDeleted();
-    context.Database.Migrate();
+        context.Database.EnsureDeleted();
+        context.Database.Migrate();
+    }
+
+    catch(Exception ex)
+    {
+        throw new Exception($"Error configuring db with exception: {ex}");
+    }
 }
 
 app.UseCors("AllowAll");

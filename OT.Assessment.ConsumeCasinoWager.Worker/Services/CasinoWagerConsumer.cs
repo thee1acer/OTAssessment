@@ -9,17 +9,21 @@ using OT.Assessment.Database.Models;
 using Microsoft.Extensions.Logging;
 using OT.Assessment.Api.Models;
 using Mapster;
+using OT.Assessment.Database;
+using Microsoft.EntityFrameworkCore;
 
 namespace OT.Assessment.ConsumeCasinoWager.Worker.Services;
 
 public class CasinoWagerConsumer : BackgroundService
 {
+    private OTAssessmentContext _dbContext;
     private CasinoWagersService _casinoWagersService;
     private ILogger<CasinoWagerConsumer> _logger;
 
 
-    public CasinoWagerConsumer(CasinoWagersService casinoWagersService, ILogger<CasinoWagerConsumer> logger)
+    public CasinoWagerConsumer(OTAssessmentContext dbContext, CasinoWagersService casinoWagersService, ILogger<CasinoWagerConsumer> logger)
     {
+        _dbContext = dbContext;
         _casinoWagersService = casinoWagersService;
         _logger = logger;
     }
@@ -62,7 +66,8 @@ public class CasinoWagerConsumer : BackgroundService
 
                 if (wagers?.Any() ?? false)
                 {
-                    await _casinoWagersService.InsertCasinoWagersAsync(wagersMapped);
+                    //await _casinoWagersService.InsertCasinoWagersAsync(wagersMapped);
+                    PerformDbInsert();
 
                     _logger.LogDebug($"[#] Received: {DateTime.Now} [#]");
 
@@ -84,6 +89,23 @@ public class CasinoWagerConsumer : BackgroundService
         catch(Exception ex)
         {
             _logger.LogError($"Failed to consume with error: {ex}");
+        }
+    }
+
+    private async void PerformDbInsert()
+    {
+        try
+        {
+            var acccount = await _dbContext.Accounts.ToListAsync();
+
+            var wagers = await _dbContext.Wagers.ToListAsync();
+
+            var accountIds = wagers?.Select(v => v.AccountId).ToList();
+        }
+
+        catch(Exception e)
+        {
+            _logger.LogError($"Issue performing db insert {e}");
         }
     }
 }

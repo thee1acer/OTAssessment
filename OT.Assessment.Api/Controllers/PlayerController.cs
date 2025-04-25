@@ -39,7 +39,7 @@ public class PlayerController : Controller
             _logger.LogDebug("[#] Now wagers founf [#]");
         }
 
-        return BadRequest();
+        return NoContent();
     }
 
     [Route(PlayerControllerConfiguration.PlayerWagers)]

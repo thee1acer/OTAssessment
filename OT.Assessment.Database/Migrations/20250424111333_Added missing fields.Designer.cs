@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using OT.Assessment.Database;
 
@@ -11,9 +12,11 @@ using OT.Assessment.Database;
 namespace OT.Assessment.Database.Migrations
 {
     [DbContext(typeof(OTAssessmentContext))]
-    partial class OTAssessmentContextModelSnapshot : ModelSnapshot
+    [Migration("20250424111333_Added missing fields")]
+    partial class Addedmissingfields
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -410,7 +413,15 @@ namespace OT.Assessment.Database.Migrations
 
                     b.HasIndex("AccountId");
 
+                    b.HasIndex("BrandId");
+
+                    b.HasIndex("CreatedDateTime");
+
+                    b.HasIndex("ExternalReferenceId");
+
                     b.HasIndex("TransactionId");
+
+                    b.HasIndex("TransactionTypeId");
 
                     b.ToTable("Wagers", (string)null);
                 });

@@ -1,6 +1,6 @@
 namespace OT.Assessment.Database.Models;
 
-public class Wager : Audit
+public class Wager
 {
     public Guid Id { get; set; }
     public required string Theme { get; set; }

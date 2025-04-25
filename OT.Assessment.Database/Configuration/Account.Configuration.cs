@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using OT.Assessment.Database.Models;
 
-namespace OT.Assessment.Database.Configurations;
+namespace OT.Assessment.Database.Configuration;
 
 public class AccountConfiguration : IEntityTypeConfiguration<Account>
 {

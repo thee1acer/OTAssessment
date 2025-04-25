@@ -34,7 +34,7 @@ Make sure you have the following tools installed:
 
 - **Docker:** For running containers and managing services.
 - **RabbitMQ:** Used as the message broker in this system.
-- **Visual Studio: ** To run and test the application.
+- **Visual Studio:** To run and test the application.
 
 ### Running the Application
 
