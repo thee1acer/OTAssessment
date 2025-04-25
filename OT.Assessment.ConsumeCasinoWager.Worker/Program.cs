@@ -4,14 +4,11 @@ using Microsoft.Extensions.Options;
 using OT.Assessment.ConsumeCasinoWager.Worker.Services;
 using OT.Assessment.Database;
 using OT.Assessment.Database.Helpers;
-using OT.Assessment.Database.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = Host.CreateApplicationBuilder(args);
 
-
 builder.Services.AddOptions<ConnectionString>().BindConfiguration("REFERENCE_DB");
-
 builder.Services.AddDbContext<OTAssessmentContext>((provider, options) =>
 {
     var connectionDetails = provider.GetRequiredService<IOptions<ConnectionString>>();
@@ -20,7 +17,9 @@ builder.Services.AddDbContext<OTAssessmentContext>((provider, options) =>
     options.UseSqlServer(connectionString, ops => ops.EnableRetryOnFailure());
 });
 
+builder.Services.RegisterServices();
 builder.Services.AddHostedService<CasinoWagerConsumer>();
-builder.Services.AddScoped<CasinoWagersService>();
 
-builder.Build().Run();
+var worker = builder.Build();
+
+worker.Run();

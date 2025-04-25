@@ -6,14 +6,18 @@ services:
     container_name: ot-assessment-api
     hostname: ot-assessment-api
     environment:
-      - REFERENCE_DB__SERVER=mssql-server
-      - REFERENCE_DB__DATABASE_NAME=OTAssessment
-      - REFERENCE_DB__USER=sa
-      - REFERENCE_DB__PASSWORD=5tr0ngP@55w0rD
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=http://+:5000
+      - REFERENCE_DB__SERVER=${REFERENCE_DB__SERVER}
+      - REFERENCE_DB__DATABASE_NAME=${REFERENCE_DB__DATABASE_NAME}
+      - REFERENCE_DB__USER=${REFERENCE_DB__USER}
+      - REFERENCE_DB__PASSWORD=${REFERENCE_DB__PASSWORD}
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
+      - ASPNETCORE_URLS=http://0.0.0.0:5000
+      - RABBITMQ_HOST=${RABBITMQ_HOST}
+      - RABBITMQ_PORT=${RABBITMQ_PORT}
+      - RABBITMQ_USERNAME=${RABBITMQ_USERNAME}
+      - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}
     ports:
-      - "5000:5000"
+      - 5000
     depends_on:
       rabbitmq:
         condition: service_healthy
@@ -24,19 +28,21 @@ services:
     networks:
       - ot-assessment-network
     restart: always
-    expose:
-      - 5000
-    healthcheck:
-      test: ["CMD-SHELL", "curl --fail http://localhost:5000/health || exit 1"] 
-      interval: 10s
-      timeout: 5s
-      retries: 2
 
   ot-assessment-casino-wager-consumer-worker:
     build:
       context: .
       dockerfile: OT.Assessment.ConsumeCasinoWager.Worker/Dockerfile
     container_name: casino-wager-consumer-worker
+    environment:
+      - RABBITMQ_HOST=${RABBITMQ_HOST}
+      - RABBITMQ_PORT=${RABBITMQ_PORT}
+      - RABBITMQ_USERNAME=${RABBITMQ_USERNAME}
+      - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}
+      - REFERENCE_DB__SERVER=${REFERENCE_DB__SERVER}
+      - REFERENCE_DB__DATABASE_NAME=${REFERENCE_DB__DATABASE_NAME}
+      - REFERENCE_DB__USER=${REFERENCE_DB__USER}
+      - REFERENCE_DB__PASSWORD=${REFERENCE_DB__PASSWORD}
     depends_on:
       rabbitmq:
         condition: service_healthy
@@ -53,6 +59,11 @@ services:
       context: .
       dockerfile: OT.Assessment.ProduceCasinoWager.Worker/Dockerfile
     container_name: casino-wager-producer-worker
+    environment:
+      - RABBITMQ_HOST=${RABBITMQ_HOST}
+      - RABBITMQ_PORT=${RABBITMQ_PORT}
+      - RABBITMQ_USERNAME=${RABBITMQ_USERNAME}
+      - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}
     depends_on:
       rabbitmq:
         condition: service_healthy
@@ -72,7 +83,7 @@ services:
     hostname: ot-assessment-tester
     depends_on:
       ot-assessment-api:
-        condition: service_healthy
+        condition: service_started
     networks:
       - ot-assessment-network
     restart: always
@@ -100,9 +111,10 @@ services:
   mssql-server:
     image: mcr.microsoft.com/mssql/server:2022-latest
     container_name: mssql-server
+    user: root
     environment:
       - ACCEPT_EULA=Y
-      - SA_PASSWORD=5tr0ngP@55w0rD
+      - SA_PASSWORD=${REFERENCE_DB__PASSWORD}
     ports:
       - "1433:1433"
     networks:
@@ -114,6 +126,11 @@ services:
     image: redis:7.2-alpine
     container_name: redis-tls
     hostname: redis-tsl
+    environment:
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT}
+      - REDIS_USERNAME=${REDIS_USERNAME}
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
     ports:
       - "6379:6379"
     volumes:
@@ -136,8 +153,8 @@ services:
       - "5672:5672"
       - "15672:15672"
     environment:
-      - RABBITMQ_DEFAULT_USER=default
-      - RABBITMQ_DEFAULT_PASS=5tr0ngP@55w0rD
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_USERNAME}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD}
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
     networks:
@@ -150,10 +167,8 @@ services:
 
 volumes:
   agent-data:
-  rabbitmq_data:
-    driver: local
+  rabbitmq_data: 
   mssql_data:
-    driver: local
   redis-data:
   
 networks:

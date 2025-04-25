@@ -6,7 +6,7 @@ using OT.Assessment.Database.Models;
 using DotNetEnv;
 
 namespace OT.Assessment.Database;
-public partial class OTAssessmentContext: DbContext
+public class OTAssessmentContext: DbContext
 {
     public OTAssessmentContext(){}
     public OTAssessmentContext(DbContextOptions<OTAssessmentContext> options): base(options) {}

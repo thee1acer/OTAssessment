@@ -41,11 +41,14 @@ services:
       - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}
       - REFERENCE_DB__SERVER=${REFERENCE_DB__SERVER}
       - REFERENCE_DB__DATABASE_NAME=${REFERENCE_DB__DATABASE_NAME}
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
       - REFERENCE_DB__USER=${REFERENCE_DB__USER}
       - REFERENCE_DB__PASSWORD=${REFERENCE_DB__PASSWORD}
     depends_on:
       rabbitmq:
         condition: service_healthy
+      ot-assessment-api:
+        condition: service_started
     networks:
       - ot-assessment-network
     healthcheck:
@@ -90,6 +93,7 @@ services:
   mssql-server:
     image: mcr.microsoft.com/mssql/server:2022-latest
     container_name: mssql-server
+    user: root
     environment:
       - ACCEPT_EULA=Y
       - SA_PASSWORD=${REFERENCE_DB__PASSWORD}
@@ -145,9 +149,7 @@ services:
 
 volumes:
   rabbitmq_data:
-    driver: local
   mssql_data:
-    driver: local
   redis-data:
   
 networks:
