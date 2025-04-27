@@ -11,19 +11,21 @@ using OT.Assessment.Api.Models;
 using Mapster;
 using OT.Assessment.Database;
 using Microsoft.EntityFrameworkCore;
+using OT.Assessment.Services;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace OT.Assessment.ConsumeCasinoWager.Worker.Services;
 
 public class CasinoWagerConsumer : BackgroundService
 {
-    private OTAssessmentContext _dbContext;
+    private IServiceProvider _serviceProvider;
     private CasinoWagersService _casinoWagersService;
     private ILogger<CasinoWagerConsumer> _logger;
 
 
-    public CasinoWagerConsumer(OTAssessmentContext dbContext, CasinoWagersService casinoWagersService, ILogger<CasinoWagerConsumer> logger)
+    public CasinoWagerConsumer(IServiceProvider serviceProvider, CasinoWagersService casinoWagersService, ILogger<CasinoWagerConsumer> logger)
     {
-        _dbContext = dbContext;
+        _serviceProvider = serviceProvider;
         _casinoWagersService = casinoWagersService;
         _logger = logger;
     }
@@ -66,8 +68,7 @@ public class CasinoWagerConsumer : BackgroundService
 
                 if (wagers?.Any() ?? false)
                 {
-                    //await _casinoWagersService.InsertCasinoWagersAsync(wagersMapped);
-                    PerformDbInsert();
+                    PerformDbInsert(wagersMapped);
 
                     _logger.LogDebug($"[#] Received: {DateTime.Now} [#]");
 
@@ -92,15 +93,16 @@ public class CasinoWagerConsumer : BackgroundService
         }
     }
 
-    private async void PerformDbInsert()
+    private async void PerformDbInsert(List<Wager> wagersMapped)
     {
         try
         {
-            var acccount = await _dbContext.Accounts.ToListAsync();
+            await _casinoWagersService.InsertCasinoWagersAsync(wagersMapped);
 
-            var wagers = await _dbContext.Wagers.ToListAsync();
+            /*using var scope = _serviceProvider.CreateScope();
+            var _dbContext = scope.ServiceProvider.GetRequiredService<OTAssessmentContext>();
 
-            var accountIds = wagers?.Select(v => v.AccountId).ToList();
+            var wagers = await _dbContext.Wagers.ToListAsync();*/
         }
 
         catch(Exception e)

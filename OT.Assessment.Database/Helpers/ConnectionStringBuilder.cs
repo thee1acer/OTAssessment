@@ -5,7 +5,7 @@ public class ConnectionStringBuilder
     public static string BuildConnectionString(ConnectionString connectionDetails)
     {
         return @$"
-            Server=tcp:{connectionDetails.Server},1433;
+            Server=tcp:{connectionDetails.Server};
             Initial Catalog={connectionDetails.DatabaseName};
             Persist Security Info=False;
             User ID={connectionDetails.User};

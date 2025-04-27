@@ -51,7 +51,7 @@ Follow these steps to set up and run the system:
    Add secrets file ```.env``` in your root folder with fields:
    ```bash
       REFERENCE_DB__SERVER="mssql-server"
-      REFERENCE_DB__DATABASE_NAME="OTAssessment"
+      REFERENCE_DB__DATABASENAME="OTAssessment"
       REFERENCE_DB__USER="sa"
       REFERENCE_DB__PASSWORD="5tr0ngP@55w0rD"
       

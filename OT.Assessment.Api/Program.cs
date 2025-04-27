@@ -5,6 +5,7 @@ using OT.Assessment.Database;
 using OT.Assessment.Database.Helpers;
 using OT.Assessment.ProduceCasinoWager.Worker.Services;
 using OT.Assessment.Services;
+using DotNetEnv;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,8 +25,10 @@ builder.Services.AddCors(options =>
     )
 );
 
-builder.Services.AddOptions<ConnectionString>().BindConfiguration("REFERENCE_DB");
 
+Env.Load();
+
+builder.Services.AddOptions<ConnectionString>().BindConfiguration("REFERENCE_DB");
 builder.Services.AddDbContext<OTAssessmentContext>((provider, options) =>
 {
     var connectionDetails = provider.GetRequiredService<IOptions<ConnectionString>>();

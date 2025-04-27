@@ -32,7 +32,7 @@ public class OTAssessmentContext: DbContext
             var connectionDetails = new ConnectionString()
             {
                 Server = GetEnvironmentVariable("SERVER"),
-                DatabaseName = GetEnvironmentVariable("DATABASE_NAME"),
+                DatabaseName = GetEnvironmentVariable("DATABASENAME"),
                 Password = GetEnvironmentVariable("PASSWORD"),
                 User = GetEnvironmentVariable("USER"),
             };
