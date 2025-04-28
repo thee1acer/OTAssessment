@@ -64,7 +64,7 @@ public class NbomberService : BackgroundService
                     
                     if(response.IsSuccessStatusCode) return Response.Ok();
 
-                    _logger.LogInformation($"[#] Failed to perform a post request with results {response}[#]");                    
+                    _logger.LogInformation($"[#] Failed to perform a post request with results {response}[#]");                
                     
                     return Response.Fail();
                 }
@@ -79,7 +79,7 @@ public class NbomberService : BackgroundService
             (
                 Simulation.IterationsForInject
                 (
-                    rate: 10,
+                    rate: 500,
                     interval: TimeSpan.FromSeconds(2),
                     iterations: 7000
                 )
@@ -87,14 +87,14 @@ public class NbomberService : BackgroundService
 
         try
         {
-            _logger.LogDebug($"Starting NBomberRunner");
+            _logger.LogInformation($"Starting NBomberRunner");
 
             NBomberRunner
                 .RegisterScenarios(scenario)
                 .WithoutReports()
                 .Run();
 
-            _logger.LogDebug($"NBomberRunner Finished successfully");
+            _logger.LogInformation($"NBomberRunner Finished successfully");
         }
         catch (Exception ex)
         {

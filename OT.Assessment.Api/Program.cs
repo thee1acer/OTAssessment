@@ -39,9 +39,9 @@ builder.Services.AddDbContext<OTAssessmentContext>((provider, options) =>
     options.UseSqlServer(connectionString, ops =>
     {
         ops.EnableRetryOnFailure();
-        ops.CommandTimeout(30);
-        ops.MinBatchSize(1);
-        ops.MaxBatchSize(1000);
+        ops.CommandTimeout(int.MaxValue);
+        ops.MinBatchSize(int.MaxValue);
+        ops.MaxBatchSize(int.MaxValue);
     });
 });
 
@@ -49,7 +49,7 @@ builder.Services.Configure<KestrelServerOptions>(options =>
 {
     options.Limits.MaxConcurrentConnections = 100_000;
     options.Limits.MaxConcurrentUpgradedConnections = 100_000;
-    options.Limits.MaxRequestBodySize = 100  * 10 * 1024;
+    options.Limits.MaxRequestBodySize = 1000  * 10 * 1024;
     options.Limits.KeepAliveTimeout = TimeSpan.FromSeconds(30);
     options.Limits.RequestHeadersTimeout = TimeSpan.FromSeconds(15);
 });

@@ -44,8 +44,8 @@ public class CasinoWagerConsumer : BackgroundService
 
         try
         {
-            await using var connection = await factory.CreateConnectionAsync();
-            await using var channel = await connection.CreateChannelAsync();
+            await using var connection = await factory.CreateConnectionAsync(stoppingToken);
+            await using var channel = await connection.CreateChannelAsync(cancellationToken: stoppingToken);
 
             await channel.QueueDeclareAsync
             (
@@ -53,7 +53,8 @@ public class CasinoWagerConsumer : BackgroundService
                 durable: false,
                 exclusive: false,
                 autoDelete: false,
-                arguments: null
+                arguments: null,
+                cancellationToken: stoppingToken
             );
 
             var consumer = new AsyncEventingBasicConsumer(channel);
@@ -82,7 +83,8 @@ public class CasinoWagerConsumer : BackgroundService
             (
                 queue: "my-queue",
                 autoAck: true,
-                consumer: consumer
+                consumer: consumer,
+                cancellationToken: stoppingToken
             );
 
             await Task.Delay(Timeout.Infinite, stoppingToken);
@@ -98,11 +100,8 @@ public class CasinoWagerConsumer : BackgroundService
         try
         {
             await _casinoWagersService.InsertCasinoWagersAsync(wagersMapped);
-
-            /*using var scope = _serviceProvider.CreateScope();
-            var _dbContext = scope.ServiceProvider.GetRequiredService<OTAssessmentContext>();
-
-            var wagers = await _dbContext.Wagers.ToListAsync();*/
+            
+            _logger.LogInformation("[x] Performing DB Insert [x]");
         }
 
         catch(Exception e)

@@ -14,7 +14,6 @@ public class ConnectionStringBuilder
             MultipleActiveResultSets=False;
             Encrypt=False;
             TrustServerCertificate=False;
-            Connection Timeout=30;
         ";
     }
 }
