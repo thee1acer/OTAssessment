@@ -1,7 +1,7 @@
 ﻿using Bogus;
 using OT.Assessment.Api.Models;
-using OT.Assessment.Database.Models;
 
+namespace OT.Assessment.Tester.Services;
 public class CasinoWagerBogusGenerator
 {
     public CasinoWagerBogusGenerator() { }

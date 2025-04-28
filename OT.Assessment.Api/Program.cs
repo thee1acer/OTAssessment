@@ -1,11 +1,16 @@
+using DotNetEnv;
 using Microsoft.AspNetCore.Cors.Infrastructure;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using OT.Assessment.Database;
 using OT.Assessment.Database.Helpers;
 using OT.Assessment.ProduceCasinoWager.Worker.Services;
 using OT.Assessment.Services;
-using DotNetEnv;
+
+ThreadPool.SetMinThreads(workerThreads: 500, completionPortThreads: 500);
+
+Env.Load();
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,20 +30,31 @@ builder.Services.AddCors(options =>
     )
 );
 
-
-Env.Load();
-
 builder.Services.AddOptions<ConnectionString>().BindConfiguration("REFERENCE_DB");
 builder.Services.AddDbContext<OTAssessmentContext>((provider, options) =>
 {
     var connectionDetails = provider.GetRequiredService<IOptions<ConnectionString>>();
     var connectionString = ConnectionStringBuilder.BuildConnectionString(connectionDetails.Value);
 
-    options.UseSqlServer(connectionString, ops => ops.EnableRetryOnFailure());
+    options.UseSqlServer(connectionString, ops =>
+    {
+        ops.EnableRetryOnFailure();
+        ops.CommandTimeout(30);
+        ops.MinBatchSize(1);
+        ops.MaxBatchSize(1000);
+    });
+});
+
+builder.Services.Configure<KestrelServerOptions>(options =>
+{
+    options.Limits.MaxConcurrentConnections = 100_000;
+    options.Limits.MaxConcurrentUpgradedConnections = 100_000;
+    options.Limits.MaxRequestBodySize = 100  * 10 * 1024;
+    options.Limits.KeepAliveTimeout = TimeSpan.FromSeconds(30);
+    options.Limits.RequestHeadersTimeout = TimeSpan.FromSeconds(15);
 });
 
 builder.Services.RegisterServices();
-
 builder.Services.AddTransient<PlayerService>();
 builder.Services.AddSingleton<CasinoWagerProducer>();
 
@@ -69,7 +85,6 @@ using (var scope = app.Services.CreateScope())
 app.UseCors("AllowAll");
 app.UseAuthorization();
 app.MapControllers();
-
 app.MapHealthChecks("/health");
 
 app.Run("http://0.0.0.0:5000");

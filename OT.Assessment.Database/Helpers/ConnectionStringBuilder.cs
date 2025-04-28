@@ -10,6 +10,7 @@ public class ConnectionStringBuilder
             Persist Security Info=False;
             User ID={connectionDetails.User};
             Password={connectionDetails.Password};
+            Max Pool Size=500;
             MultipleActiveResultSets=False;
             Encrypt=False;
             TrustServerCertificate=False;
